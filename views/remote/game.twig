@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block title %}Remote{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  const gameName = "{{ gameName }}"
+  const userName = "{{ userName }}"
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/static/js/remote/canvas.js"></script>
+<script type="text/javascript" src="/static/js/remote/game.js"></script>
+{% endblock %}
+
+{% block main %}
+<div class="game-header-remote">
+  <h1>{{ gameName }}: {{ userName }}</h1>
+</div>
+<div class="centered">
+  
+</div>
+{% endblock %}
