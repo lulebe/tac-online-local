@@ -21,6 +21,9 @@ function initCanvas () {
 
 function drawGame () {
   drawBoard()
+  drawStarts()
+  drawHouses()
+  drawRunning()
 }
 
 function drawBoard () {
@@ -31,13 +34,17 @@ function drawBoard () {
   ctx.arc(canvas.width/2, canvas.height/2, minWidth/2 - 2*padding, 0, 2 * Math.PI)
   ctx.stroke()
   //2. draw arrows
-
+  drawArrows()
   //3. draw starting box
   drawBoxes()
   //4. draw house fields
   drawHouseFields()
   //5. draw fields
   drawFields()
+}
+
+function drawArrows () {
+  //TODO implement
 }
 
 //0 = normal, 1 = go-field, 2 = -4, 3 = 8, then house fields
@@ -141,10 +148,34 @@ function drawBoxes () {
   ctx.stroke()
 }
 
+function drawStarts () {
+  //TODO implement
+}
+
+function drawHouses () {
+  //TODO implement
+}
+
+function drawRunning () {
+  //TODO implement
+}
+
 function canvasClick (x, y) {
   const bounds = canvas.getBoundingClientRect()
-  const realX = Math.floor((x - bounds.left - translateX) / scale / tileSize)
-  const realY = Math.floor((y - bounds.top - translateY) / scale / tileSize)
+  const realX = Math.floor(x - bounds.left)
+  const realY = Math.floor(y - bounds.top)
   const clickedField = {realX, realY}
   console.log(clickedField)
+  //TODO
+  /*
+  distance from center => is on circle?
+  click angle
+  if on circle => find field by angle
+  if inside circle => find house field by angle & distance
+  if outside circle => find start box by angle & distance
+  */
 }
+
+canvas.addEventListener('click', e => {
+  canvasClick(e.clientX, e.clientY)
+})
