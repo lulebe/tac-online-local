@@ -7,7 +7,7 @@
   const gameName = "{{ gameName }}"
 </script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/static/js/screen/canvas.js"></script>
+<script type="text/javascript" src="/static/js/canvas.js"></script>
 <script type="text/javascript" src="/static/js/screen/game.js"></script>
 {% endblock %}
 
@@ -24,10 +24,6 @@
     <ul id="scoreboard"></ul>
   </div>
   <div class="game-misc">
-    Zoom: 
-    <button id="zoom-in">+</button>
-    <button id="zoom-out">-</button>
-    <br><br><br>
     <div id="warning-box">This is a test warning.</div>
   </div>
   <div class="game-main-actions">

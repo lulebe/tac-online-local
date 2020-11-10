@@ -52,10 +52,10 @@ else
 
 function initGame () {
   fillDecks()
-  setStartingPlayer()
   updateScoreboard()
   initCanvas()
   updateScreens()
+  displayCurrentPlayer()
 }
 
 function canLoadGame () {
@@ -80,6 +80,7 @@ function loadGame () {
   initCanvas()
   updateScreens()
   updateDeckdata()
+  displayCurrentPlayer()
 }
 
 function startNewGame () {
@@ -144,6 +145,10 @@ function updateScoreboard () {
   scoreboard.innerHTML = [...game.players].reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name}</li>`, "")
 }
 
+function displayCurrentPlayer () {
+  document.getElementById('turn-player').innerHTML = game.players[game.turn].name
+}
+
 const WARN_NOTHING = 0
 const warnings = [""]
 let warningTimeout = null
@@ -168,7 +173,7 @@ function toNextTurn () {
   } else {
     game.turn = game.turn == game.players.length - 1 ? 0 : game.turn + 1
     //TODO implement skip player
-    document.getElementById('turn-player').innerHTML = game.players[game.turn].name
+    displayCurrentPlayer()
     saveGame()
   }
 }
