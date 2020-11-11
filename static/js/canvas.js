@@ -320,7 +320,7 @@ function drawUsedCards () {
   ctx.save()
   ctx.translate(canvas.width/2, canvas.height/2)
   ctx.rotate(2 * Math.PI * game.usedCards.length / 1500)
-  //TODO draw
+  drawCard(0, 0, minWidth/6, game.usedCards[game.usedCards.length-1])
   ctx.restore()
 }
 
