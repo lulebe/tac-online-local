@@ -47,7 +47,7 @@ function warnScreens (warningNum) {
   socket.emit('screen-warning', {gameName: gameName, warningNum})
 }
 
-const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), turn: 0}
+const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), usedCards: [], turn: 0}
 
 
 function initStones () {

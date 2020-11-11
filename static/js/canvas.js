@@ -27,6 +27,7 @@ function initCanvas () {
 function drawGame () {
   drawBoard()
   drawStones()
+  drawUsedCards()
 }
 
 function drawBoard () {
@@ -39,12 +40,13 @@ function drawBoard () {
   ctx.strokeStyle = '#888888'
   ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.arc(canvas.width/2, canvas.height/2, minWidth/3.5 - 2*padding, 0, 2 * Math.PI)
+  ctx.arc(canvas.width/2, canvas.height/2, minWidth/3.7 - 2*padding, 0, 2 * Math.PI)
   ctx.stroke()
   drawArrows()
   drawBoxes()
   drawHouseFields()
   drawFields()
+  drawNoUsedCards()
 }
 
 function drawArrows () {
@@ -194,6 +196,21 @@ function drawBoxes () {
   ctx.stroke()
 }
 
+function drawNoUsedCards () {
+  const minX = canvas.width/2 - minWidth/30
+  const minY = canvas.height/2 - minWidth/30
+  const maxX = canvas.width/2 + minWidth/30
+  const maxY = canvas.height/2 + minWidth/30
+  ctx.strokeStyle = '#555555'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(minX, minY)
+  ctx.lineTo(maxX, maxY)
+  ctx.moveTo(minX, maxY)
+  ctx.lineTo(maxX, minY)
+  ctx.stroke()
+}
+
 function drawStones () {
   for (let pi = 0; pi < game.players.length; pi++) {
     let boxSize = 0
@@ -296,6 +313,15 @@ function drawStone (centerX, centerY, playerIndex) {
   ctx.beginPath()
   ctx.arc(centerX, centerY, fieldSize / 3, 0, 2 * Math.PI)
   ctx.fill()
+}
+
+function drawUsedCards () {
+  if (game.usedCards.length === 0) return
+  ctx.save()
+  ctx.translate(canvas.width/2, canvas.height/2)
+  ctx.rotate(2 * Math.PI * game.usedCards.length / 1500)
+  //TODO draw
+  ctx.restore()
 }
 
 function canvasClick (x, y) {
