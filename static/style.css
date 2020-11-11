@@ -14,9 +14,9 @@ button:active:hover, .btn:active:hover {
   transform: scale(0.98);
 }
 button.primary, .btn.primary {
-  background: #6622cc;
+  background: #8d5200;
   color: white;
-  border: 2px solid #6622cc;
+  border: 2px solid #8d5200;
 }
 button.warning, .btn.warning {
   background: #ff9966;
@@ -92,7 +92,7 @@ button:disabled, .btn:disabled {
   grid-column: 1/span 2;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   z-index: 1;
-  background-color: #6622cc;
+  background-color: #8d5200;
   color: white;
 }
 .game-header h1 {
@@ -221,23 +221,11 @@ button:disabled, .btn:disabled {
   justify-content: space-evenly;
 }
 
-.remote-piece {
-  margin: 12px 0;
-  height: 64px;
-}
-.remote-piece canvas {
-  display: block;
-  margin: 0 auto;
-}
-.remote-piece.selected {
-  background: #ccc;
-}
-
 .game-header-remote {
   height: 64px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   z-index: 1;
-  background-color: #6622cc;
+  background-color: #8d5200;
   color: white;
   padding-top: 20px;
 }
@@ -281,10 +269,10 @@ fieldset {
 }
 
 a {
-  color: #6622cc;
+  color: #8d5200;
 }
 a:visited {
-  color: #6622cc;
+  color: #8d5200;
 }
 
 

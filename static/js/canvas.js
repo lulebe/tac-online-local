@@ -30,11 +30,16 @@ function drawGame () {
 }
 
 function drawBoard () {
-  //draw circle
+  //draw circles
   ctx.strokeStyle = '#555555'
-  ctx.lineWidth = 1
+  ctx.lineWidth = 2
   ctx.beginPath()
   ctx.arc(canvas.width/2, canvas.height/2, minWidth/2 - 2*padding, 0, 2 * Math.PI)
+  ctx.stroke()
+  ctx.strokeStyle = '#888888'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.arc(canvas.width/2, canvas.height/2, minWidth/3.5 - 2*padding, 0, 2 * Math.PI)
   ctx.stroke()
   drawArrows()
   drawBoxes()
@@ -44,43 +49,44 @@ function drawBoard () {
 
 function drawArrows () {
   ctx.strokeStyle = '#555555'
-  ctx.lineWidth = 1
+  ctx.lineWidth = 2
+  ctx.beginPath()
   let centerX = Math.cos((5/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
   let centerY = Math.sin((5/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-  let endX1 = centerX - fieldSize
-  let endY1 = centerY - fieldSize
-  let endX2 = centerX + fieldSize
-  let endY2 = centerY - fieldSize
+  let endX1 = centerX - fieldSize/1.5
+  let endY1 = centerY - fieldSize/1.5
+  let endX2 = centerX + fieldSize/1.5
+  let endY2 = centerY - fieldSize/1.5
   ctx.moveTo(endX1, endY1)
   ctx.lineTo(centerX, centerY)
   ctx.lineTo(endX2, endY2)
   ctx.stroke()
   centerX = Math.cos((133/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
   centerY = Math.sin((133/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-  endX1 = centerX + fieldSize
-  endY1 = centerY - fieldSize
-  endX2 = centerX + fieldSize
-  endY2 = centerY + fieldSize
+  endX1 = centerX + fieldSize/1.5
+  endY1 = centerY - fieldSize/1.5
+  endX2 = centerX + fieldSize/1.5
+  endY2 = centerY + fieldSize/1.5
   ctx.moveTo(endX1, endY1)
   ctx.lineTo(centerX, centerY)
   ctx.lineTo(endX2, endY2)
   ctx.stroke()
   centerX = Math.cos((261/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
   centerY = Math.sin((261/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-  endX1 = centerX - fieldSize
-  endY1 = centerY + fieldSize
-  endX2 = centerX + fieldSize
-  endY2 = centerY + fieldSize
+  endX1 = centerX - fieldSize/1.5
+  endY1 = centerY + fieldSize/1.5
+  endX2 = centerX + fieldSize/1.5
+  endY2 = centerY + fieldSize/1.5
   ctx.moveTo(endX1, endY1)
   ctx.lineTo(centerX, centerY)
   ctx.lineTo(endX2, endY2)
   ctx.stroke()
   centerX = Math.cos((389/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
   centerY = Math.sin((389/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-  endX1 = centerX - fieldSize
-  endY1 = centerY - fieldSize
-  endX2 = centerX - fieldSize
-  endY2 = centerY + fieldSize
+  endX1 = centerX - fieldSize/1.5
+  endY1 = centerY - fieldSize/1.5
+  endX2 = centerX - fieldSize/1.5
+  endY2 = centerY + fieldSize/1.5
   ctx.moveTo(endX1, endY1)
   ctx.lineTo(centerX, centerY)
   ctx.lineTo(endX2, endY2)
