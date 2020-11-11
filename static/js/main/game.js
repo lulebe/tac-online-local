@@ -35,6 +35,10 @@ socket.on('screen-event', data => {
   }
 })
 
+const STONE_POSITION_BOX = 0
+const STONE_POSITION_FIELD = 1
+const STONE_POSITION_HOUSE = 2
+
 function updateScreens () {
   socket.emit('screen-update', {gameName: gameName, data: game})
 }
@@ -43,7 +47,19 @@ function warnScreens (warningNum) {
   socket.emit('screen-warning', {gameName: gameName, warningNum})
 }
 
-const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: []})), box: makeBox(), table: {}, turn: 0}
+const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), turn: 0}
+
+
+function initStones () {
+  return [1,2,3,4].map(_ => ({
+    position: STONE_POSITION_BOX,
+    field: null
+  }))
+}
+//TODO temp
+game.players[0].stones[0] = {position: STONE_POSITION_FIELD, field: 0}
+game.players[0].stones[1] = {position: STONE_POSITION_FIELD, field: 50}
+game.players[1].stones[0] = {position: STONE_POSITION_HOUSE, field: 0}
 
 if (canLoadGame()) //has saved game
   displayLoadGamePopup()

@@ -1,10 +1,11 @@
 const canvas = document.getElementById("game-canvas")
 const ctx = canvas.getContext("2d")
 
-let minWidth = 100
+let minWidth = 100, fieldDistance = 10, fieldSize = 10
 const padding = 10
 const PASTEL_COLORS = ['#ffe8cc', '#ccccff', '#ffcccc', '#ceffce']
-const FULL_COLORS = ['#ff9008', '#0808ff', '#ff0808', '#00bb00']
+const FULL_COLORS = ['#ff9008', '#1c1cff', '#ff0808', '#00bb00']
+const DARK_COLORS = ['#b96600', '#0000a5', '#b90000', '#006d00']
 
 window.addEventListener('resize', resizeCanvas)
 
@@ -12,6 +13,10 @@ function resizeCanvas () {
   document.getElementById("game-canvas").width = document.getElementById("game-table").clientWidth -10
   document.getElementById("game-canvas").height = document.getElementById("game-table").clientHeight -10
   minWidth = Math.min(canvas.width, canvas.height)
+  const fieldDistanceX = Math.cos((1/64)*2*Math.PI) * (minWidth/2 - 2*padding) - (minWidth/2 - 2*padding)
+  const fieldDistanceY = Math.sin((1/64)*2*Math.PI) * (minWidth/2 - 2*padding)
+  fieldDistance = Math.sqrt(Math.pow(fieldDistanceX, 2) + Math.pow(fieldDistanceY, 2))
+  fieldSize = (minWidth/2 - 2*padding)/32
   drawGame()
 }
 
@@ -21,30 +26,65 @@ function initCanvas () {
 
 function drawGame () {
   drawBoard()
-  drawStarts()
-  drawHouses()
-  drawRunning()
+  drawStones()
 }
 
 function drawBoard () {
-  //1. draw circle
+  //draw circle
   ctx.strokeStyle = '#555555'
   ctx.lineWidth = 1
   ctx.beginPath()
   ctx.arc(canvas.width/2, canvas.height/2, minWidth/2 - 2*padding, 0, 2 * Math.PI)
   ctx.stroke()
-  //2. draw arrows
   drawArrows()
-  //3. draw starting box
   drawBoxes()
-  //4. draw house fields
   drawHouseFields()
-  //5. draw fields
   drawFields()
 }
 
 function drawArrows () {
-  //TODO implement
+  ctx.strokeStyle = '#555555'
+  ctx.lineWidth = 1
+  let centerX = Math.cos((5/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+  let centerY = Math.sin((5/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+  let endX1 = centerX - fieldSize
+  let endY1 = centerY - fieldSize
+  let endX2 = centerX + fieldSize
+  let endY2 = centerY - fieldSize
+  ctx.moveTo(endX1, endY1)
+  ctx.lineTo(centerX, centerY)
+  ctx.lineTo(endX2, endY2)
+  ctx.stroke()
+  centerX = Math.cos((133/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+  centerY = Math.sin((133/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+  endX1 = centerX + fieldSize
+  endY1 = centerY - fieldSize
+  endX2 = centerX + fieldSize
+  endY2 = centerY + fieldSize
+  ctx.moveTo(endX1, endY1)
+  ctx.lineTo(centerX, centerY)
+  ctx.lineTo(endX2, endY2)
+  ctx.stroke()
+  centerX = Math.cos((261/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+  centerY = Math.sin((261/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+  endX1 = centerX - fieldSize
+  endY1 = centerY + fieldSize
+  endX2 = centerX + fieldSize
+  endY2 = centerY + fieldSize
+  ctx.moveTo(endX1, endY1)
+  ctx.lineTo(centerX, centerY)
+  ctx.lineTo(endX2, endY2)
+  ctx.stroke()
+  centerX = Math.cos((389/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+  centerY = Math.sin((389/512)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+  endX1 = centerX - fieldSize
+  endY1 = centerY - fieldSize
+  endX2 = centerX - fieldSize
+  endY2 = centerY + fieldSize
+  ctx.moveTo(endX1, endY1)
+  ctx.lineTo(centerX, centerY)
+  ctx.lineTo(endX2, endY2)
+  ctx.stroke()
 }
 
 //0 = normal, 1 = go-field, 2 = -4, 3 = 8, then house fields
@@ -108,7 +148,7 @@ function drawField (style, centerX, centerY) {
   ctx.lineWidth = FIELD_TYPES[style].width
   ctx.fillStyle = FIELD_TYPES[style].fill
   ctx.beginPath()
-  ctx.arc(centerX, centerY, (minWidth/2 - 2*padding) / 32, 0, 2 * Math.PI)
+  ctx.arc(centerX, centerY, fieldSize, 0, 2 * Math.PI)
   ctx.stroke()
   ctx.fill()
 }
@@ -148,16 +188,108 @@ function drawBoxes () {
   ctx.stroke()
 }
 
-function drawStarts () {
-  //TODO implement
+function drawStones () {
+  for (let pi = 0; pi < game.players.length; pi++) {
+    let boxSize = 0
+    game.players[pi].stones.forEach(stone => {
+      switch (stone.position) {
+        case STONE_POSITION_BOX:
+          boxSize++
+        break
+        case STONE_POSITION_FIELD:
+          drawStoneField(stone.field, pi)
+        break
+        case STONE_POSITION_HOUSE:
+          drawStoneHouse(stone.field, pi)
+      }
+    })
+    drawBox(boxSize, pi)
+  }
 }
 
-function drawHouses () {
-  //TODO implement
+function drawStoneField (field, playerIndex) {
+  const centerX = Math.cos((field/64)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+  const centerY = Math.sin((field/64)*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+  drawStone(centerX, centerY, playerIndex)
 }
 
-function drawRunning () {
-  //TODO implement
+function drawStoneHouse (field, playerIndex) {
+  
+  let baseX, baseY
+  switch (playerIndex) {
+    case 0:
+      baseX = Math.cos(0*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+      baseY = Math.sin(0*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+      drawStone(baseX - (1+field)*fieldDistance, baseY, playerIndex)
+    break
+    case 1:
+      baseX = Math.cos(0.25*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+      baseY = Math.sin(0.25*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+      drawStone(baseX, baseY - (1+field)*fieldDistance, playerIndex)
+    break
+    case 2:
+      baseX = Math.cos(0.5*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+      baseY = Math.sin(0.5*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+      drawStone(baseX + (1+field)*fieldDistance, baseY, playerIndex)
+    break
+    case 3:
+      baseX = Math.cos(0.75*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
+      baseY = Math.sin(0.75*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
+      drawStone(baseX, baseY + (1+field)*fieldDistance, playerIndex)
+  }
+}
+
+function drawBox (size, playerIndex) {
+  let boxCenterX, boxCenterY
+  const boxRadius = Math.cos(0.25*Math.PI) * (minWidth/2 - 2*padding) * 0.5
+  switch (playerIndex) {
+    case 0:
+      boxCenterX = canvas.width - boxRadius/3
+      boxCenterY = boxRadius/3
+    break
+    case 1:
+      boxCenterX = canvas.width - boxRadius/3
+      boxCenterY = canvas.height - boxRadius/3
+    break
+    case 2:
+      boxCenterX = boxRadius/3
+      boxCenterY = canvas.height - boxRadius/3
+    break
+    case 3:
+      boxCenterX = boxRadius/3
+      boxCenterY = boxRadius/3
+  }
+  switch (size) {
+    case 1:
+      drawStone(boxCenterX, boxCenterY, playerIndex)
+    break
+    case 2:
+      drawStone(boxCenterX - fieldSize*1.5, boxCenterY, playerIndex)
+      drawStone(boxCenterX + fieldSize*1.5, boxCenterY, playerIndex)
+    break
+    case 3:
+      drawStone(boxCenterX - fieldSize*1.5, boxCenterY - fieldSize*1.5, playerIndex)
+      drawStone(boxCenterX + fieldSize*1.5, boxCenterY - fieldSize*1.5, playerIndex)
+      drawStone(boxCenterX, boxCenterY + fieldSize*1.5, playerIndex)
+    break
+    case 4:
+      drawStone(boxCenterX - fieldSize*1.5, boxCenterY - fieldSize*1.5, playerIndex)
+      drawStone(boxCenterX + fieldSize*1.5, boxCenterY - fieldSize*1.5, playerIndex)
+      drawStone(boxCenterX - fieldSize*1.5, boxCenterY + fieldSize*1.5, playerIndex)
+      drawStone(boxCenterX + fieldSize*1.5, boxCenterY + fieldSize*1.5, playerIndex)
+    break
+  }
+}
+
+function drawStone (centerX, centerY, playerIndex) {
+  ctx.fillStyle = FULL_COLORS[playerIndex]
+  ctx.beginPath()
+  ctx.arc(centerX, centerY, fieldSize, 0, 2 * Math.PI)
+  ctx.fill()
+  ctx.fillStyle = DARK_COLORS[playerIndex]
+  ctx.beginPath()
+  ctx.arc(centerX, centerY, fieldSize / 3, 0, 2 * Math.PI)
+  ctx.fill()
 }
 
 function canvasClick (x, y) {
