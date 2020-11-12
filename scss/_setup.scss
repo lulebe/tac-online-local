@@ -8,11 +8,16 @@
   list-style: none;
   padding: 0;
   li {
+    cursor: pointer;
     padding: 12px;
     padding-left: 42px;
     position: relative;
-    &:nth-child(even) {
-      background: #ddd;
+    color: green;
+    &.team-b {
+      color: red;
+    }
+    &:hover {
+      background: #ccc;
     }
     &:not(:first-child) {
       border-top: 1px solid #aaa;

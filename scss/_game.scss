@@ -65,11 +65,12 @@
     &.turn {
       font-weight: bold;
     }
-    &:nth-child(even) {
-      background: #ddd;
-    }
     &:not(:first-child) {
       border-top: 1px solid #aaa;
+    }
+    background: #aaffaa;
+    &.team-b {
+      background: #ffaaaa;
     }
   }
   .color-marker {

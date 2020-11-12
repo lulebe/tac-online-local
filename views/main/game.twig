@@ -5,7 +5,7 @@
 {% block js %}
 <script type="text/javascript">
   const gameName = "{{ gameName }}"
-  const playerNames = {{ players | raw }}
+  const players = {{ players | raw }}
 </script>
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="/static/js/canvas_cards.js"></script>

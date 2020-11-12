@@ -46,8 +46,15 @@ function updateScreens () {
 function warnScreens (warningNum) {
   socket.emit('screen-warning', {gameName: gameName, warningNum})
 }
-
-const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), usedCards: [1,2,3,6,8,2,13,15,2,6,2,8,4,7,1,2,3,6,8,2,13,15,2,6,2,8,4,7,8], turn: 0}
+const gameHistory = []
+const game = {
+  name: gameName,
+  players: players.map(name => ({name, connected: false, deck: [], stones: initStones()})),
+  box: makeBox(),
+  usedCards: [],
+  turn: 0,
+  currentStartingPlayer: 0
+}
 
 
 function initStones () {
@@ -56,10 +63,6 @@ function initStones () {
     field: null
   }))
 }
-//TODO temp
-game.players[0].stones[0] = {position: STONE_POSITION_FIELD, field: 0}
-game.players[0].stones[1] = {position: STONE_POSITION_FIELD, field: 50}
-game.players[1].stones[0] = {position: STONE_POSITION_HOUSE, field: 0}
 
 if (canLoadGame()) //has saved game
   displayLoadGamePopup()
@@ -128,7 +131,14 @@ function arrShuffle (array) {
 }
 
 function fillDecks () {
-  //TODO implement
+  if (box.length < (4*5)) { //refill box
+    game.usedCards = []
+    game.box = makeBox()
+  }
+  game.players.forEach(p => {
+    p.deck = game.box.splice(0, 5)
+  })
+  drawGame()
   updateDeckdata()
   updateScreens()
 }
@@ -145,6 +155,8 @@ function boardClicked (data) {//TODO implement
 }
 
 function makeTurn () {
+  gameHistory.splice(0, gameHistory.length-1)
+  gameHistory.push(clone(game))
   drawGame()
   toNextTurn()
   updateScoreboard()
@@ -221,6 +233,9 @@ function clone(obj) {
 }
 
 function saveGame () {
+  for (let i = 0; i < game.players.length; i++) {
+    game.players[i].teamB = (i % 2 === 1)
+  }
   window.localStorage.setItem('game', JSON.stringify(game))
 }
 function clearSavedGame () {

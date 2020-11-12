@@ -27,6 +27,7 @@ button:disabled, .btn:disabled {
   background: #aaa;
   cursor: default;
   transform: none;
+  visibility: hidden;
 }
 
 @keyframes setup-player-color-scale {
@@ -45,12 +46,17 @@ button:disabled, .btn:disabled {
   padding: 0;
 }
 #setup-player-list li {
+  cursor: pointer;
   padding: 12px;
   padding-left: 42px;
   position: relative;
+  color: green;
 }
-#setup-player-list li:nth-child(even) {
-  background: #ddd;
+#setup-player-list li.team-b {
+  color: red;
+}
+#setup-player-list li:hover {
+  background: #ccc;
 }
 #setup-player-list li:not(:first-child) {
   border-top: 1px solid #aaa;
@@ -143,15 +149,16 @@ button:disabled, .btn:disabled {
   padding: 12px;
   position: relative;
   padding-left: 42px;
+  background: #aaffaa;
 }
 #scoreboard li.turn {
   font-weight: bold;
 }
-#scoreboard li:nth-child(even) {
-  background: #ddd;
-}
 #scoreboard li:not(:first-child) {
   border-top: 1px solid #aaa;
+}
+#scoreboard li.team-b {
+  background: #ffaaaa;
 }
 #scoreboard .color-marker {
   position: absolute;
