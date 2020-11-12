@@ -47,7 +47,7 @@ function warnScreens (warningNum) {
   socket.emit('screen-warning', {gameName: gameName, warningNum})
 }
 
-const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), usedCards: [], turn: 0}
+const game = {name: gameName, players: playerNames.map(name => ({name, score: 0, connected: false, deck: [], stones: initStones()})), box: makeBox(), usedCards: [1,2,3,6,8,2,13,15,2,6,2,8,4,7,1,2,3,6,8,2,13,15,2,6,2,8,4,7,8], turn: 0}
 
 
 function initStones () {
@@ -140,8 +140,8 @@ function updateDeckdata () {
   socket.emit('client-update', {game: gameName, decks: deckData})
 }
 
-function clickedField () {//TODO implement
-  
+function boardClicked (data) {//TODO implement
+  console.log(data)
 }
 
 function makeTurn () {

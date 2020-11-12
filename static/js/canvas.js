@@ -25,6 +25,7 @@ function initCanvas () {
 }
 
 function drawGame () {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   drawBoard()
   drawStones()
   drawUsedCards()
@@ -98,9 +99,9 @@ function drawArrows () {
 //0 = normal, 1 = go-field, 2 = -4, 3 = 8, then house fields
 const FIELD_TYPES = [
   {stroke: '#000000', width: 2, fill: '#ffffff'},
-  {stroke: '#000000', width: 2, fill: '#cccccc'},
-  {stroke: '#660000', width: 2, fill: '#eeeeee'},
-  {stroke: '#333333', width: 2, fill: '#eeeeee'},
+  {stroke: '#000000', width: 2, fill: '#c5c5c5'},
+  {stroke: '#880000', width: 2, fill: '#e5e5e5'},
+  {stroke: '#333333', width: 2, fill: '#e5e5e5'},
   {stroke: '#333333', width: 2, fill: PASTEL_COLORS[0]},
   {stroke: '#333333', width: 2, fill: PASTEL_COLORS[1]},
   {stroke: '#333333', width: 2, fill: PASTEL_COLORS[2]},
@@ -113,7 +114,7 @@ function drawFields () {
     let style = 0
     if (i % 16 === 0)
       style = 1
-    else if ((i+12) % 16 === 0)
+    else if ((i+4) % 16 === 0)
       style = 2
     else if ((i+8) % 16 === 0)
       style = 3
@@ -317,6 +318,13 @@ function drawStone (centerX, centerY, playerIndex) {
 
 function drawUsedCards () {
   if (game.usedCards.length === 0) return
+  for (let i = 0; i < game.usedCards.length-1; i += 10) {
+    ctx.save()
+    ctx.translate(canvas.width/2, canvas.height/2)
+    ctx.rotate(2 * Math.PI * i / 1500)
+    drawCard(0, 0, minWidth/6, game.usedCards[i])
+    ctx.restore()
+  }
   ctx.save()
   ctx.translate(canvas.width/2, canvas.height/2)
   ctx.rotate(2 * Math.PI * game.usedCards.length / 1500)
@@ -324,20 +332,58 @@ function drawUsedCards () {
   ctx.restore()
 }
 
+const CLICK_POSITION_FIELD = 0
+const CLICK_POSITION_HOUSE = 1
+const CLICK_POSITION_BOX = 2
 function canvasClick (x, y) {
   const bounds = canvas.getBoundingClientRect()
   const realX = Math.floor(x - bounds.left)
   const realY = Math.floor(y - bounds.top)
-  const clickedField = {realX, realY}
-  console.log(clickedField)
-  //TODO
-  /*
-  distance from center => is on circle?
-  click angle
-  if on circle => find field by angle
-  if inside circle => find house field by angle & distance
-  if outside circle => find start box by angle & distance
-  */
+  const centerDistanceX = realX - canvas.width/2
+  const centerDistanceY = realY - canvas.height/2
+  const centerDistance = Math.sqrt(Math.pow(centerDistanceX, 2) + Math.pow(centerDistanceY, 2))
+  let radians = Math.acos(centerDistanceX / centerDistance)
+  if (Math.asin(centerDistanceY / centerDistance) < 0)
+    radians = 2 * Math.PI - radians
+  let field = radians/2/Math.PI * 64
+  field = field > 63.5 ? 0 : Math.round(field)
+  //field
+  if (centerDistance < (minWidth/2 - 2*padding + fieldSize) && centerDistance > (minWidth/2 - 2*padding - fieldSize)) {
+    boardClicked({position: CLICK_POSITION_FIELD, field, player: null})
+    return
+  }
+  //houses
+  const fieldDistanceX = Math.cos((1/64)*2*Math.PI) * (minWidth/2 - 2*padding) - (minWidth/2 - 2*padding)
+  const fieldDistanceY = Math.sin((1/64)*2*Math.PI) * (minWidth/2 - 2*padding)
+  const fieldDistance = Math.sqrt(Math.pow(fieldDistanceX, 2) + Math.pow(fieldDistanceY, 2))
+  let base = Math.cos(0*2*Math.PI) * (minWidth/2 - 2*padding)
+  console.log(centerDistance, field)
+  if (centerDistance < base && centerDistance > base-4*fieldDistance-fieldSize && field % 16 === 0) {
+    boardClicked({
+      position: CLICK_POSITION_HOUSE,
+      field: Math.round((base-centerDistance)/fieldDistance)-1,
+      player: Math.round(field / 16)
+    })
+    return
+  }
+  //boxes
+  const boxRadius = Math.cos(0.25*Math.PI) * (minWidth/2 - 2*padding) * 0.5
+  if (Math.sqrt(Math.pow(realX - canvas.width, 2) + Math.pow(realY, 2)) < boxRadius) {
+    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 0})
+    return
+  }
+  if (Math.sqrt(Math.pow(realX - canvas.width, 2) + Math.pow(realY - canvas.height, 2)) < boxRadius) {
+    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 1})
+    return
+  }
+  if (Math.sqrt(Math.pow(realX, 2) + Math.pow(realY - canvas.height, 2)) < boxRadius) {
+    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 2})
+    return
+  }
+  if (Math.sqrt(Math.pow(realX, 2) + Math.pow(realY, 2)) < boxRadius) {
+    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 3})
+    return
+  }
 }
 
 canvas.addEventListener('click', e => {
