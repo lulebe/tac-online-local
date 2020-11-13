@@ -4,8 +4,9 @@ socket.on('connect', () => {
 })
 socket.on('selection-change', data => {
   const player = game.players.find(player => player.name == data.player)
-  if (player)
-    player.deck = data.deck
+  player.deck = data.deck
+  updateDeckdata()
+  displaySelectedCard()
 })
 socket.on('players', function(data) {
   const connected = {}
@@ -15,7 +16,7 @@ socket.on('players', function(data) {
   game.players.forEach(player => {
     player.connected = connected[player.name]
   })
-  updateScoreboard()
+  displayScoreboard()
   updateDeckdata()
 })
 const SE_CLICKED_FIELD = 1
@@ -49,7 +50,7 @@ function warnScreens (warningNum) {
 const gameHistory = []
 const game = {
   name: gameName,
-  players: players.map(name => ({name, connected: false, deck: [], stones: initStones()})),
+  players: players.map((name, i) => ({name, teamB: i % 2 === 1, connected: false, deck: [], stones: initStones()})),
   box: makeBox(),
   usedCards: [],
   turn: 0,
@@ -71,7 +72,7 @@ else
 
 function initGame () {
   fillDecks()
-  updateScoreboard()
+  displayScoreboard()
   initCanvas()
   updateScreens()
   displayCurrentPlayer()
@@ -95,7 +96,7 @@ function loadGame () {
   game.table = loadedGame.table
   game.turn = loadedGame.turn
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
-  updateScoreboard()
+  displayScoreboard()
   initCanvas()
   updateScreens()
   updateDeckdata()
@@ -137,6 +138,7 @@ function fillDecks () {
   }
   game.players.forEach(p => {
     p.deck = game.box.splice(0, 5)
+    p.deck.forEach(card => [card, 0].join(','))
   })
   drawGame()
   updateDeckdata()
@@ -146,8 +148,17 @@ function fillDecks () {
 function updateDeckdata () {
   //send new decks to clients
   const deckData = {}
-  game.players.forEach(p => deckData[p.name] = p.deck)
+  game.players.forEach(p => deckData[p.name] = {deck: p.deck, canSelect: getSelectableCards(p)})
   socket.emit('client-update', {game: gameName, decks: deckData})
+}
+
+function getSelectableCards (player) {
+  if (game.players[game.turn] !== player) return []
+  const selectable = []
+  player.deck.map(c => c.split(',')).forEach((c, i) => {
+    if (canPlayCard(0, game.turn, c[0])) selectable.push(i)
+  })
+  return selectable
 }
 
 function boardClicked (data) {//TODO implement
@@ -159,7 +170,7 @@ function makeTurn () {
   gameHistory.push(clone(game))
   drawGame()
   toNextTurn()
-  updateScoreboard()
+  displayScoreboard()
   updateScreens()
 }
 
@@ -167,14 +178,20 @@ function checkTurnAllowed () { //TODO implement
   return false
 }
 
-function updateScoreboard () {
+function displayScoreboard () {
   const scoreboard = document.getElementById('scoreboard')
   const turn = game.players[game.turn]
-  scoreboard.innerHTML = [...game.players].reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name}</li>`, "")
+  scoreboard.innerHTML = [...game.players].reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""} ${player.teamB ? "team-b" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name}</li>`, "")
 }
 
 function displayCurrentPlayer () {
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
+}
+
+function displaySelectedCard () {
+  const selCardNumber = game.players[game.turn].deck.find(c => c.split(',')[1] === 1)
+  document.getElementById('card-img').src = '/static/imgs/cards/' + (selCardNumber || '0') + '.png'
+  document.getElementById('card-info').innerHTML = CARD_INFO(selCardNumber || 0)
 }
 
 const WARN_NOTHING = 0
@@ -196,7 +213,7 @@ function gameEnd () {
 
 function toNextTurn () {
   if (false) {//TODO implement end game
-    updateScoreboard()
+    displayScoreboard()
     gameEnd()
   } else {
     game.turn = game.turn == game.players.length - 1 ? 0 : game.turn + 1
@@ -243,6 +260,5 @@ function clearSavedGame () {
 }
 
 document.getElementById('main-action-reset').addEventListener('click', resetTurn)
-document.getElementById('main-action-finish').addEventListener('click', makeTurn)
 document.getElementById('loadgame-load').addEventListener('click', loadGame)
 document.getElementById('loadgame-new').addEventListener('click', startNewGame)

@@ -10,6 +10,8 @@
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="/static/js/canvas_cards.js"></script>
 <script type="text/javascript" src="/static/js/canvas.js"></script>
+<script type="text/javascript" src="/static/js/cardinfo.js"></script>
+<script type="text/javascript" src="/static/js/main/gamelogic.js"></script>
 <script type="text/javascript" src="/static/js/main/game.js"></script>
 {% endblock %}
 
@@ -26,14 +28,13 @@
     <ul id="scoreboard"></ul>
   </div>
   <div class="game-misc">
-    Current card:<br>
-    <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-current">
-    <span>No card is selected.</span>
+    Current card:<br><br>
+    <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-img">
+    <span id="card-info">No card is selected.</span>
     <div id="warning-box">This is a test warning.</div>
   </div>
   <div class="game-main-actions">
-    <button id="main-action-reset">reset</button>
-    <button id="main-action-finish" class="primary">finish</button>
+    <button id="main-action-reset">reset turn</button>
   </div>
 </div>
 <div id="loadgame-popup">
