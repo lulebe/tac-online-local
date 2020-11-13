@@ -1,10 +1,7 @@
 function drawCard (x, y, size, card) {
-  //outline & bg
-  ctx.strokeStyle = '#000000'
+  //bg
   ctx.fillStyle = '#ffffff'
-  ctx.lineWidth = 1
   ctx.fillRect(x - size/2, y - size*0.75, size, size*1.5)
-  ctx.strokeRect(x - size/2, y - size*0.75, size, size*1.5)
   //texture
   ctx.strokeStyle = '#aaaaaa'
   ctx.lineWidth = 1
@@ -21,7 +18,11 @@ function drawCard (x, y, size, card) {
     ctx.lineTo(x + size/2, y + size*0.25 + size*i*0.05)
   })
   ctx.stroke()
-  //specials
+  //outline
+  ctx.strokeStyle = '#000000'
+  ctx.lineWidth = 1
+  ctx.strokeRect(x - size/2, y - size*0.75, size, size*1.5)
+  //card
   if (card == 1 || card == 13) drawCardStart(x, y, size, card)
   else if (card == 4) drawCardReverse(x, y, size, card)
   else if (card == 7) drawCardSingleSteps(x, y, size, card)

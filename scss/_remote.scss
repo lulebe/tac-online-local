@@ -11,3 +11,11 @@
     font-size: 20px;
   }
 }
+
+.remote-card {
+  display: none;
+  height: 200px;
+  &.visible {
+    display: block;
+  }
+}

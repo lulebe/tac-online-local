@@ -8,7 +8,6 @@
   const userName = "{{ userName }}"
 </script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/static/js/remote/canvas.js"></script>
 <script type="text/javascript" src="/static/js/remote/game.js"></script>
 {% endblock %}
 
@@ -17,6 +16,10 @@
   <h1>{{ gameName }}: {{ userName }}</h1>
 </div>
 <div class="centered">
-  
+  <img src="" class="remote-card" id="card-1">
+  <img src="" class="remote-card" id="card-2">
+  <img src="" class="remote-card" id="card-3">
+  <img src="" class="remote-card" id="card-4">
+  <img src="" class="remote-card" id="card-5">
 </div>
 {% endblock %}

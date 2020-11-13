@@ -131,7 +131,7 @@ function arrShuffle (array) {
 }
 
 function fillDecks () {
-  if (box.length < (4*5)) { //refill box
+  if (game.box.length < (4*5)) { //refill box
     game.usedCards = []
     game.box = makeBox()
   }

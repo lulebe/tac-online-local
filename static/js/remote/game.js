@@ -11,9 +11,23 @@ socket.on('update', deck => {
 })
 
 function displayDeck (deck) {
-  
+  const container = document.getElementById('card-container')
+  for (let i = 1; index <= 5; i++) {
+    const element = document.getElementById('card-'+i)
+    const card = deck[i].split(',') //card number, isSelected
+    if (!card) {
+      element.classList.remove('visible')
+      element.src = "/static/imgs/cards/0.png"
+    } else {
+      element.classList.add('visible')
+      element.src = "/static/imgs/cards/"+card[0]+".png"
+    }
+  }
 }
 
-for (let i = 0; i < deck.length; i++) {
-  
+for (let i = 1; index <= 5; i++) {
+  const element = document.getElementById('card-'+i)
+  element.addEventListener('click', e => {
+    console.log("clicked card", i)
+  })
 }
