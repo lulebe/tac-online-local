@@ -31,7 +31,7 @@ function displayPlayers () {
   container.innerHTML = html
   document.getElementById("connected-players").innerHTML = players.length
   document.getElementById("start-button").disabled = !checkTeamsCorrect()
-  if (!checkTeamsCorrect) return
+  if (!checkTeamsCorrect()) return
   document.getElementById('inp-p1').value = players.filter(p => !p.teamB)[0].name
   document.getElementById('inp-p2').value = players.filter(p => p.teamB)[0].name
   document.getElementById('inp-p3').value = players.filter(p => !p.teamB)[1].name

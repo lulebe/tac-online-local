@@ -332,9 +332,9 @@ function drawUsedCards () {
   ctx.restore()
 }
 
-const CLICK_POSITION_FIELD = 0
-const CLICK_POSITION_HOUSE = 1
-const CLICK_POSITION_BOX = 2
+const CLICK_POSITION_BOX = 0
+const CLICK_POSITION_FIELD = 1
+const CLICK_POSITION_HOUSE = 2
 function canvasClick (x, y) {
   const bounds = canvas.getBoundingClientRect()
   const realX = Math.floor(x - bounds.left)

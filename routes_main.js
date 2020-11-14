@@ -19,5 +19,5 @@ router.post('/start_game', (req, res) => {
 })
 
 router.get('/start_game', (req, res) => {
-  twing.render('main/game.twig', {gameName: "test", players: JSON.stringify(['Torm','Karl','Gustav','Andi'])}).then(rendered => res.end(rendered))
+  twing.render('main/game.twig', {gameName: "TEST", players: JSON.stringify(['test1','test2','test3','test4'])}).then(rendered => res.end(rendered))
 })

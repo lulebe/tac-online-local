@@ -242,12 +242,18 @@ button:disabled, .btn:disabled {
   font-size: 20px;
 }
 
-.remote-card {
+.remote-card-container {
+  text-align: center;
   display: none;
-  height: 200px;
 }
-.remote-card.visible {
+.remote-card-container.visible {
   display: block;
+}
+.remote-card-container.selected {
+  background: #ccc;
+}
+.remote-card-container img {
+  height: 200px;
 }
 
 * {

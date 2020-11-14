@@ -8,34 +8,40 @@ socket.on('connect', function(){
 socket.on('update', data => {
   currentDeck = data.deck
   canSelect = data.canSelect
-  displayDeck(data.deck)
+  displayDeck(currentDeck)
   
 })
 
 function displayDeck (deck) {
-  currentDeck = deck.map(c => c.split(',')) //0 = number, 1 = selected (1/0)
-  for (let i = 1; index <= 5; i++) {
+  for (let i = 0; i < 5; i++) {
     const card = deck[i]
-    const element = document.getElementById('card-'+i)
-    element.classList.remove('selected')
+    const cardElement = document.getElementById('card-'+i)
+    const cardContainer = document.getElementById('card-container-'+i)
+    cardContainer.classList.remove('selected')
     if (!card) {
-      element.classList.remove('visible')
-      element.src = "/static/imgs/cards/0.png"
+      cardContainer.classList.remove('visible')
+      cardElement.src = "/static/imgs/cards/0.png"
     } else {
-      element.classList.add('visible')
-      element.src = "/static/imgs/cards/"+card[0]+".png"
-      if (card[1]) element.classList.add('selected')
+      cardContainer.classList.add('visible')
+      cardElement.src = "/static/imgs/cards/"+card[0]+".png"
+      if (card[1] === 1) cardContainer.classList.add('selected')
     }
   }
 }
 
-for (let i = 1; index <= 5; i++) {
-  const element = document.getElementById('card-'+i)
+for (let i = 0; i < 5; i++) {
+  const element = document.getElementById('card-container-'+i)
   element.addEventListener('click', e => {
-    element.classList.add('selected')
-    if (!currentDeck[i] || !canSelect.includes(i)) return
+    const isUnselected = currentDeck[i][1] === 0
     currentDeck.forEach(c => c[1] = 0)
-    currentDeck[i][1] = 1
-    socket.emit('selection-change', {player: userName, deck: currentDeck.map(c => c.join(','))})
+    for (let j = 0; j < 5; j++) {
+      document.getElementById('card-container-'+j).classList.remove('selected')   
+    }
+    if (!currentDeck[i] || !canSelect.includes(i)) return
+    if (isUnselected) { //select
+      element.classList.add('selected')
+      currentDeck[i][1] = 1
+    }
+    socket.emit('selection-change', {player: userName, deck: currentDeck})
   })
 }

@@ -26,7 +26,7 @@ const CARD_INFO = [
   `,
   `
     <strong>Move individually</strong><br>
-    Make 7 moves forward by 1. You can use different stones, kick stones in the way etc, like moving 7 times with a "1" card.
+    Make 7 moves forward by 1. You can use different stones, kick stones in the way etc, like moving 7 times with a "1" card. Each click will move the stone forward by one.
   `,
   `
     <strong>Move</strong> or <strong>skip player</strong><br>

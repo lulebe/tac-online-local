@@ -54,6 +54,7 @@ module.exports =  {
         }
       })
       client.on('selection-change', data => {
+        console.log('selection-change', data)
         client.playsGame && client.playsGame.host && client.playsGame.host.emit('selection-change', data)
       })
       client.on('game-end', data => {

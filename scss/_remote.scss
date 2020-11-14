@@ -11,11 +11,16 @@
     font-size: 20px;
   }
 }
-
-.remote-card {
+.remote-card-container {
+  text-align: center;
   display: none;
-  height: 200px;
   &.visible {
     display: block;
+  }
+  &.selected {
+    background: #ccc;
+  }
+  img {
+    height: 200px;
   }
 }
