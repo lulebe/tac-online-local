@@ -8,7 +8,7 @@ function canPlayCard (game, playerIndex, card, movesLeft7) {
     case 7:
       return canMove7(game, playerIndex)
     case 8:
-      return getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD)
+      return getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD) && game.players[playerIndex === 3 ? 0 : playerIndex+1].deck.length
     case 13:
       return getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_BOX)
     case 14:
@@ -76,13 +76,13 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
       if (isFree) {
         const removedStone = field[num2field(stone.field - 4)]
         results.push({
-          stone: {position: STONE_POSITION_FIELD, field: num2field(stone.field - 4)},
+          stone: {position: STONE_POSITION_FIELD, field: num2field(stone.field - 4), canGoToHouse: true},
           removed: removedStone ? [removedStone] : []
         })
       }
     }
     if ([1,2,3,5,6,8,9,10,12,13].includes(cardNumber))
-      results = results.concat(getMoveForwardByXResults(game, playerIndex, stone, cardNumber))
+      results = results.concat(getMoveByXResults(game, playerIndex, stone, cardNumber))
   }
   if ([1,13].includes(cardNumber) && stone.position === STONE_POSITION_BOX) {
     const stoneOnStart = field[num2field(game.players[playerIndex].playsFor * 16)]
@@ -102,7 +102,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     }
     if (fieldsToGo <= cardNumber)
       results.push({
-        stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber},
+        stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber, canGoToHouse: true},
         removed: []
       })
   }
@@ -111,17 +111,17 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
       const houseStones = getPlayerStones(game, playerIndex).filter(s => s.position === STONE_POSITION_HOUSE)
       if (stone.field > 0 && !houseStones.some(s => s.field === stone.field-1))
         results.push({
-          stone: {position: STONE_POSITION_HOUSE, field: stone.field-1},
+          stone: {position: STONE_POSITION_HOUSE, field: stone.field-1, canGoToHouse: true},
           removed: []
         })
       if (stone.field < 3 && !houseStones.some(s => s.field === stone.field+1))
         results.push({
-          stone: {position: STONE_POSITION_HOUSE, field: stone.field+1},
+          stone: {position: STONE_POSITION_HOUSE, field: stone.field+1, canGoToHouse: true},
           removed: []
         })
     }
     if (stone.position === STONE_POSITION_FIELD) {
-      let fieldMoveResults = getMoveForwardByXResults(game, playerIndex, stone, 1)
+      let fieldMoveResults = getMoveByXResults(game, playerIndex, stone, 1)
       if (fieldMoveResults.some(r => r.stone.position === STONE_POSITION_HOUSE)) {
         if ((movesLeft7 || 7) > 1 && getPlayerStones(game, playerIndex).filter(s => s.position === STONE_POSITION_HOUSE).length === 3) {
           let playerToCheck = null
@@ -137,27 +137,38 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
   return results
 }
 
-function getMoveForwardByXResults (game, playerIndex, stone, x) {
-  const fieldsToGoInHouse = num2field(stone.field + x) - game.players[playerIndex].playsFor * 16
-  if (fieldsToGoInHouse >= 1 && fieldsToGoInHouse <= 4) {
+function getFieldsToHouse (playerIndex, stoneField, goingForward) {
+  const transformedField = num2field(stoneField - playerIndex * 16)
+  if (!goingForward) return transformedField
+  return 64 - transformedField
+}
+
+function getMoveByXResults (game, playerIndex, stone, x) {
+  const fieldsToHouse = getFieldsToHouse(playerIndex, stone.field, x>0)
+  const fieldsToGoInHouse = Math.abs(x) - fieldsToHouse
+  if (stone.canGoToHouse && fieldsToGoInHouse >= 1 && fieldsToGoInHouse <= 4) {
+    let isFree = true
+    for (let j = 1; j < fieldsToHouse; j++) {
+      if (field[num2field(x>0 ? (stone.field + j) : (stone.field - j))] !== null) isFree = false
+    }
     const sortedHouseStones = getPlayerStones(game, playerIndex)
       .filter(s => s.position === STONE_POSITION_HOUSE)
       .sort((a, b) => a.field > b.field)
-    if (sortedHouseStones[0] && sortedHouseStones[0].field > (fieldsToGoInHouse-1)) {
+    if (isFree && sortedHouseStones[0] && sortedHouseStones[0].field > (fieldsToGoInHouse-1)) {
       results.push({
-        stone: {position: STONE_POSITION_HOUSE, field: fieldsToGoInHouse-1},
+        stone: {position: STONE_POSITION_HOUSE, field: fieldsToGoInHouse-1, canGoToHouse: true},
         removed: []
       })
     }
   }
   let isFree = true
-  for (let j = 1; j < (x); j++) {
-    if (field[num2field(stone.field + j)] !== null) isFree = false
+  for (let j = 1; j < Math.abs(x); j++) {
+    if (field[num2field(x>0 ? (stone.field + j) : (stone.field - j))] !== null) isFree = false
   }
   if (isFree) {
     const removedStone = field[num2field(stone.field + x)]
     results.push({
-      stone: {position: STONE_POSITION_FIELD, field: num2field(stone.field + x)},
+      stone: {position: STONE_POSITION_FIELD, field: num2field(stone.field + x), canGoToHouse: true},
       removed: removedStone ? [removedStone] : []
     })
   }
@@ -172,7 +183,7 @@ function playCard(game, playerIndex, cardNumber) {
   }
   if (cardNumber === 8) {
     turnData.clickableFields = getStonesCanGoX(8)
-    if (getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD))
+    if (getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD) && game.players[playerIndex === 3 ? 0 : playerIndex+1].deck.length)
       turnData.clickableFields.push({position: STONE_POSITION_BOX, playerIndex: (playerIndex === 3 ? 0 : playerIndex+1)})
     turnData.boardClickHandler = function (clickData) {
       if (clickData.position === CLICK_POSITION_BOX) {
@@ -196,14 +207,18 @@ function playCard(game, playerIndex, cardNumber) {
     turnData.firstSwapStone = null
     turnData.boardClickHandler = function (clickData) {
       if (!turnData.firstSwapStone) {
-        turnData.firstSwapStone = {data: assembleGameField(game)[clickData.field], field: clickData.field}
+        const stoneField = assembleGameField(game)[clickData.field]
+        turnData.firstSwapStone = game.players[stoneField.player].stones[stoneField.stone]
         game.players.forEach(p => {
           turnData.clickableFields = p.stones.filter(s => s.position === STONE_POSITION_FIELD && s.field !== clickData.field)
         })
       } else {
-        const secondStone = assembleGameField(game)[clickData.field]
-        game.players[turnData.firstSwapStone.data.player].stones[turnData.firstSwapStone.data.stone].field = clickData.field
-        game.players[secondStone.player].stones[secondStone.stone].field = turnData.firstSwapStone.field
+        const stoneField = assembleGameField(game)[clickData.field]
+        const secondStone = game.players[stoneField.player].stones[stoneField.stone]
+        firstSwapStone.field = clickData.field
+        firstSwapStone.canGoToHouse = true
+        secondStone.field = clickData.field
+        secondStone.canGoToHouse = true
         makeTurn()
       }
     }
@@ -252,10 +267,20 @@ function playCard(game, playerIndex, cardNumber) {
   }
 }
 
+
 function getStonesCanGoX (game, playerIndex, x) {
   return getPlayerStones(game, playerIndex).filter((s, i) => getStoneMoveResults(game, playerIndex, i, x).length > 0)
 }
 
+
+function removeStones(removedStones) {
+  removedStones.forEach(s => {
+    const stone = game.players[s.player].stones[s.stone]
+    stone.position = STONE_POSITION_BOX
+    stone.canGoToHouse = false
+    stone.field = null
+  })
+}
 //N7
 /*
 outside house = can always go 7 forward

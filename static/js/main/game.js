@@ -57,7 +57,7 @@ const TURN_DATA_INIT = {
   boardClickHandler: null
 }
 let turnData = clone(TURN_DATA_INIT)
-let startingPlayer = 0
+let swappingCards = []
 
 if (canLoadGame()) //has saved game
   displayLoadGamePopup()
@@ -123,6 +123,7 @@ function fillDecks () {
     p.deck = game.box.splice(0, 5).map(card => [card, 0])
     p.canStart = p.deck.some(c => [1,13].includes(c[0]))
   })
+  swappingCards = []
   drawGame()
   updateDeckdata()
   updateScreens()
@@ -151,13 +152,14 @@ function updateDeckdata () {
 
 
 function getSelectableCards (player) {
+  if (swappingCards) return player.deck.map((c, i) => i)
   if (game.players[game.turn] !== player || turnData.boardClickHandler) return []
   const selectable = []
   player.deck.forEach((c, i) => {
     if (canPlayCard(game, game.turn, c[0])) selectable.push(i)
   })
-  if (!selectable.length || (turnData.isSkipped && !selectable.includes(15))) //has to discard any card or cant tac 8-skip
-    player.deck.forEach((c, i) => selectable.push(i))
+  if (!selectable.length || turnData.isSkipped) //has to discard any card or cant tac 8-skip
+    return player.deck.map((c, i) => i)
   return selectable
 }
 
@@ -172,9 +174,24 @@ function getLastNonTacCard () {
 }
 
 
+function swapCards () {
+  swappingCards.forEach((cardIndex, playerIndex) => {
+    game.players[TEAMMATE_INDEX[playerIndex]].deck.push(game.players[playerIndex].deck.splice(cardIndex, 1))
+  })
+  swappingCards = null
+}
+
+
 function handleCardSelection () {
   const selectedCard = game.players[game.turn].deck.find(c => c[1] === 1)
-  if (!selectedCard || turnData.boardClickHandler) return
+  if (!selectedCard) return
+  if (swappingCards) {
+    swappingCards = game.players.map(p => p.deck.indexOf(p.deck.find(c => [c1] === 1))).map(i => i < 0 ? null : i)
+    if (swappingCards.every(s => !!s)) {
+      swapCards()
+    }
+  }
+  if (turnData.boardClickHandler) return
   if (turnData.isSkipped && !(selectedCard[0] === 15 && canPlayCard(game, game.turn, 15))) {
     makeTurn()
   } else {
@@ -221,16 +238,11 @@ function toNextTurn () {
     game.turn = game.turn == 3 ? 0 : game.turn + 1
   }
   if (turnData.skipNext) {
-    if (game.players[game.turn].deck.find(c => c[0] === 15) && canPlayCard(0, game.turn, 15)) {
-      game.players[game.turn].deck.find(c => c[0] === 15)[1] = 1 //select Tac card
-      turnData = clone(TURN_DATA_INIT)
-      turnData.isSkipped = true
-      turnData.playingTac = true
-      handleCardSelection()
-    } else {
-      turnData = clone(TURN_DATA_INIT)
-      turnData.isSkipped = true
-    }
+    turnData = clone(TURN_DATA_INIT)
+    turnData.isSkipped = true
+    displayWarning(WARN_SKIP)
+  } else {
+    turnData = clone(TURN_DATA_INIT)
   }
   drawGame()
   displayScoreboard()
@@ -249,7 +261,7 @@ function gameEnd () {
 
 
 function updateScreens () {
-  socket.emit('screen-update', {gameName: gameName, data: {game, turnData}})
+  socket.emit('screen-update', {gameName: gameName, data: {game, turnData, swappingCards}})
 }
 
 
@@ -284,9 +296,11 @@ function displaySelectedCard () {
 
 const WARN_NOTHING = 0
 const WARN_GAME_OVER = 1
+const WARN_SKIP = 2
 const warnings = [
   "",
-  "The game is over."
+  "The game is over.",
+  "This Player will be skipped."
 ]
 let warningTimeout = null
 function displayWarning (warningNum) {
