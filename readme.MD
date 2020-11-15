@@ -9,3 +9,10 @@ Node.js 12.x or later
     npm install
     ./node_modules/brunch/bin/brunch build
     node .
+
+
+# To Do
+
+- get 7 working
+- warnings & feedback to user
+- show selectable fields
