@@ -7,8 +7,9 @@
   const gameName = "{{ gameName }}"
 </script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/static/js/canvas.js"></script>
 <script type="text/javascript" src="/static/js/canvas_cards.js"></script>
+<script type="text/javascript" src="/static/js/canvas.js"></script>
+<script type="text/javascript" src="/static/js/cardinfo.js"></script>
 <script type="text/javascript" src="/static/js/screen/game.js"></script>
 {% endblock %}
 
@@ -25,11 +26,11 @@
     <ul id="scoreboard"></ul>
   </div>
   <div class="game-misc">
+    Current card:<br><br>
+    <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-img">
+    <span id="card-info">No card is selected.</span>
+    <div style="clear: both; margin-bottom: 16px;"></div>
     <div id="warning-box">This is a test warning.</div>
-  </div>
-  <div class="game-main-actions">
-    <button id="main-action-reset">reset</button>
-    <button id="main-action-finish" class="primary">finish</button>
   </div>
 </div>
 {% endblock %}

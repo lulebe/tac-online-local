@@ -13,6 +13,6 @@ Node.js 12.x or later
 
 # To Do
 
-- get 7 working
+- save & load
 - warnings & feedback to user
-- go into house test (& fix probably)
+- test coop

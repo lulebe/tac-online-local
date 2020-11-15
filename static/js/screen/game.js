@@ -16,37 +16,34 @@ socket.on('players', function(data) {
 })
 socket.on('game-data', data => {
   console.log(data)
-  game = data
+  game = data.game
+  turnData = data.turnData
   drawGame()
-  updateScoreboard()
+  displayScoreboard()
   displayCurrentPlayer()
 })
 socket.on('warning', data => {
   displayWarning(data.warningNum)
 })
 
+const STONE_POSITION_BOX = 0
+const STONE_POSITION_FIELD = 1
+const STONE_POSITION_HOUSE = 2
+const TEAMMATE_INDEX = [2,3,0,1]
+
 let game = null
+let turnData = null
 initCanvas()
 
 const SE_CLICKED_FIELD = 1
-const SE_RESET_TURN = 2
-const SE_MAKE_TURN = 3
-function clickedField (x, y) {
-  socket.emit('screen-event', {gameName, event: SE_CLICKED_FIELD, x, y})
+function boardClicked (data) {
+  socket.emit('screen-event', {gameName, event: SE_CLICKED_FIELD, data})
 }
 
-function resetTurn () {
-  socket.emit('screen-event', {gameName, event: SE_RESET_TURN})
-}
-
-function makeTurn () {
-  socket.emit('screen-event', {gameName, event: SE_MAKE_TURN})
-}
-
-function updateScoreboard () {
+function displayScoreboard () {
   const scoreboard = document.getElementById('scoreboard')
   const turn = game.players[game.turn]
-  scoreboard.innerHTML = [...game.players].sort((a, b) => b.score - a.score).reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name}: ${player.score} (${player.deck.length} on hand)</li>`, "")
+  scoreboard.innerHTML = game.players.reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""} ${player.teamB ? "team-b" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name} (${player.canStart ? "can" : "can't"} start)</li>`, "")
 }
 
 function displayCurrentPlayer () {
@@ -54,8 +51,12 @@ function displayCurrentPlayer () {
 }
 
 const WARN_NOTHING = 0
+const WARN_GAME_OVER = 1
+const WARN_SKIP = 2
 const warnings = [
-  ""
+  "",
+  "The game is over.",
+  "This Player will be skipped."
 ]
 let warningTimeout = null
 function displayWarning (warningNum) {
@@ -64,6 +65,3 @@ function displayWarning (warningNum) {
   document.getElementById("warning-box").classList.add("visible")
   warningTimeout = setTimeout(() => {document.getElementById("warning-box").classList.remove("visible")}, 6000)
 }
-
-document.getElementById('main-action-reset').addEventListener('click', resetTurn)
-document.getElementById('main-action-finish').addEventListener('click', makeTurn)

@@ -23,7 +23,7 @@ const SE_CLICKED_FIELD = 1
 socket.on('screen-event', data => {
   switch (data.event) {
     case SE_CLICKED_FIELD:
-      boardClicked(data)
+      boardClicked(data.data)
   }
 })
 
@@ -35,7 +35,6 @@ document.getElementById('loadgame-new').addEventListener('click', startNewGame)
 const STONE_POSITION_BOX = 0
 const STONE_POSITION_FIELD = 1
 const STONE_POSITION_HOUSE = 2
-
 const TEAMMATE_INDEX = [2,3,0,1]
 
 let game = {
