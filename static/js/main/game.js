@@ -54,6 +54,7 @@ const TURN_DATA_INIT = {
   playingTac: false,
   tacNewCard: null,
   mustDiscard: false,
+  movesLeft7: 7,
   clickableFields: [], //{position, field, playerIndex}
   boardClickHandler: null
 }
@@ -79,7 +80,8 @@ function initStones () {
   return [1,2,3,4].map(_ => ({
     position: STONE_POSITION_BOX,
     field: null,
-    canGoToHouse: false
+    canGoToHouse: false,
+    canMove: true
   }))
 }
 
@@ -220,7 +222,7 @@ function boardClicked (data) {
     canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_FIELD && f.field === data.field)
   }
   if (data.position === STONE_POSITION_HOUSE) {
-    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_HOUSE && f.playerIndex === data.playerIndex && f.field === data.field)
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_HOUSE && game.players[game.turn].playsFor === data.playerIndex && f.field === data.field)
   }
   if (turnData.boardClickHandler && canClickHere) {
     turnData.boardClickHandler(data)
@@ -234,6 +236,7 @@ function makeTurn () {
   const selectedCard = game.players[game.turn].deck.find(c => c[1] === 1)
   game.players[game.turn].deck.splice(game.players[game.turn].deck.indexOf(selectedCard), 1)
   game.usedCards.push(selectedCard[0])
+  lockHouseStones(game, game.players[game.turn].playsFor)
   toNextTurn()
 }
 

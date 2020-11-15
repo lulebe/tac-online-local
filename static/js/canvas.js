@@ -338,7 +338,6 @@ function drawClickables () {
 }
 
 function drawClickable (field) {
-  //TODO implement
   ctx.strokeStyle = '#ff0000'
   ctx.lineWidth = 4
   ctx.beginPath()
@@ -361,7 +360,7 @@ function drawClickable (field) {
     break
     case STONE_POSITION_HOUSE:
       let baseX, baseY
-      switch (field.playerIndex) {
+      switch (game.players[game.turn].playsFor) {
         case 0:
           baseX = Math.cos(0*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
           baseY = Math.sin(0*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
@@ -370,17 +369,17 @@ function drawClickable (field) {
         case 1:
           baseX = Math.cos(0.25*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
           baseY = Math.sin(0.25*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-          drawStone(baseX, baseY - (1+field.field)*fieldDistance, fieldSize, 0, 2 * Math.PI)
+          ctx.arc(baseX, baseY - (1+field.field)*fieldDistance, fieldSize, 0, 2 * Math.PI)
         break
         case 2:
           baseX = Math.cos(0.5*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
           baseY = Math.sin(0.5*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-          drawStone(baseX + (1+field.field)*fieldDistance, baseY, fieldSize, 0, 2 * Math.PI)
+          ctx.arc(baseX + (1+field.field)*fieldDistance, baseY, fieldSize, 0, 2 * Math.PI)
         break
         case 3:
           baseX = Math.cos(0.75*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.width/2
           baseY = Math.sin(0.75*2*Math.PI) * (minWidth/2 - 2*padding) + canvas.height/2
-          drawStone(baseX, baseY + (1+field.field)*fieldDistance, fieldSize, 0, 2 * Math.PI)
+          ctx.arc(baseX, baseY + (1+field.field)*fieldDistance, fieldSize, 0, 2 * Math.PI)
       }
   }
   ctx.stroke()
