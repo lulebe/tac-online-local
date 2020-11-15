@@ -15,4 +15,4 @@ Node.js 12.x or later
 
 - get 7 working
 - warnings & feedback to user
-- show selectable fields
+- go into house test (& fix probably)
