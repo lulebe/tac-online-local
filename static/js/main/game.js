@@ -38,8 +38,6 @@ const STONE_POSITION_HOUSE = 2
 
 const TEAMMATE_INDEX = [2,3,0,1]
 
-let unTacGame = null
-let preTurnGame = null
 let game = {
   name: gameName,
   players: players.map((name, i) => ({name, teamB: i % 2 === 1, canStart: false, playsFor: i, connected: false, deck: [], stones: initStones()})),
@@ -48,11 +46,14 @@ let game = {
   turn: 0,
   currentStartingPlayer: 0
 }
+let preTurnGame = clone(game)
+let unTacGame = null
 const TURN_DATA_INIT = {
   isSkipped: false,
   skipNext: false,
   playingTac: false,
   tacNewCard: null,
+  mustDiscard: false,
   clickableFields: [], //{position, field, playerIndex}
   boardClickHandler: null
 }
@@ -127,6 +128,7 @@ function fillDecks () {
   drawGame()
   updateDeckdata()
   updateScreens()
+  displayScoreboard()
 }
 
 
@@ -144,8 +146,6 @@ function isPlayerDone (game, playerIndex) {
 function updateDeckdata () {
   //send new decks to clients
   const deckData = {}
-  //TODO remove
-  game.players[0].deck[0] = [1,0]
   game.players.forEach(p => deckData[p.name] = {deck: p.deck, canSelect: getSelectableCards(p)})
   socket.emit('client-update', {game: gameName, decks: deckData})
 }
@@ -158,8 +158,10 @@ function getSelectableCards (player) {
   player.deck.forEach((c, i) => {
     if (canPlayCard(game, game.turn, c[0])) selectable.push(i)
   })
-  if (!selectable.length || turnData.isSkipped) //has to discard any card or cant tac 8-skip
+  if (!selectable.length || turnData.isSkipped) { //has to discard any card or cant tac 8-skip
+    turnData.mustDiscard = true
     return player.deck.map((c, i) => i)
+  }
   return selectable
 }
 
@@ -176,9 +178,10 @@ function getLastNonTacCard () {
 
 function swapCards () {
   swappingCards.forEach((cardIndex, playerIndex) => {
-    game.players[TEAMMATE_INDEX[playerIndex]].deck.push(game.players[playerIndex].deck.splice(cardIndex, 1))
+    game.players[TEAMMATE_INDEX[playerIndex]].deck.push([game.players[playerIndex].deck.splice(cardIndex, 1)[0][0], 0])
   })
   swappingCards = null
+  updateDeckdata()
 }
 
 
@@ -186,16 +189,19 @@ function handleCardSelection () {
   const selectedCard = game.players[game.turn].deck.find(c => c[1] === 1)
   if (!selectedCard) return
   if (swappingCards) {
-    swappingCards = game.players.map(p => p.deck.indexOf(p.deck.find(c => [c1] === 1))).map(i => i < 0 ? null : i)
-    if (swappingCards.every(s => !!s)) {
+    swappingCards = game.players.map(p => p.deck.indexOf(p.deck.find(c => c[1] === 1))).map(i => i < 0 ? null : i)
+    if (swappingCards.every(s => s !== null)) {
       swapCards()
     }
+    return
   }
   if (turnData.boardClickHandler) return
   if (turnData.isSkipped && !(selectedCard[0] === 15 && canPlayCard(game, game.turn, 15))) {
     makeTurn()
+  } else if (turnData.mustDiscard) {
+    makeTurn()
   } else {
-    playCard(selectedCard[0])
+    playCard(game, game.turn, selectedCard[0])
     updateScreens()
     drawGame()
   }
@@ -204,7 +210,18 @@ function handleCardSelection () {
 
 
 function boardClicked (data) {
-  const canClickHere = turnData.clickableFields.some(f => f.position === data.position && f.field === data.field && f.playerIndex === data.player)
+  console.log(data)
+  console.log(turnData.clickableFields)
+  let canClickHere = false
+  if (data.position === STONE_POSITION_BOX) {
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_BOX && f.playerIndex === data.player)
+  }
+  if (data.position === STONE_POSITION_FIELD) {
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_FIELD && f.field === data.field)
+  }
+  if (data.position === STONE_POSITION_HOUSE) {
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_HOUSE && f.playerIndex === data.player && f.field === data.field)
+  }
   if (turnData.boardClickHandler && canClickHere) {
     turnData.boardClickHandler(data)
     updateScreens()
@@ -247,6 +264,8 @@ function toNextTurn () {
   drawGame()
   displayScoreboard()
   updateScreens()
+  updateDeckdata()
+  displaySelectedCard()
   displayCurrentPlayer()
   saveGame()
 }
@@ -273,7 +292,7 @@ function warnScreens (warningNum) {
 function displayScoreboard () {
   const scoreboard = document.getElementById('scoreboard')
   const turn = game.players[game.turn]
-  scoreboard.innerHTML = [...game.players].reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""} ${player.teamB ? "team-b" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name} (${player.canStart ? "can" : "can't"} start)</li>`, "")
+  scoreboard.innerHTML = game.players.reduce((html, player) => html + `<li class="${player == turn ? "turn" : ""} ${player.teamB ? "team-b" : ""}"><div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>${player.name} (${player.canStart ? "can" : "can't"} start)</li>`, "")
 }
 
 
@@ -288,9 +307,15 @@ function displayCurrentPlayer () {
 
 
 function displaySelectedCard () {
-  const selCardNumber = turnData.tacNewCard || game.players[game.turn].deck.find(c => c[1] === 1)[0]
-  document.getElementById('card-img').src = '/static/imgs/cards/' + (selCardNumber || '0') + '.png'
-  document.getElementById('card-info').innerHTML = CARD_INFO[selCardNumber || 0]
+  if (swappingCards) {
+    document.getElementById('card-img').src = '/static/imgs/cards/0.png'
+    document.getElementById('card-info').innerHTML = CARD_INFO[0]
+    return
+  }
+  const selCard = game.players[game.turn].deck.find(c => c[1] === 1)
+  const cardNumber = turnData.tacNewCard || (selCard && selCard[0]) || 0
+  document.getElementById('card-img').src = '/static/imgs/cards/' + (cardNumber) + '.png'
+  document.getElementById('card-info').innerHTML = CARD_INFO[cardNumber]
 }
 
 

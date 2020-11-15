@@ -332,9 +332,6 @@ function drawUsedCards () {
   ctx.restore()
 }
 
-const CLICK_POSITION_BOX = 0
-const CLICK_POSITION_FIELD = 1
-const CLICK_POSITION_HOUSE = 2
 function canvasClick (x, y) {
   const bounds = canvas.getBoundingClientRect()
   const realX = Math.floor(x - bounds.left)
@@ -349,7 +346,7 @@ function canvasClick (x, y) {
   field = field > 63.5 ? 0 : Math.round(field)
   //field
   if (centerDistance < (minWidth/2 - 2*padding + fieldSize) && centerDistance > (minWidth/2 - 2*padding - fieldSize)) {
-    boardClicked({position: CLICK_POSITION_FIELD, field, player: null})
+    boardClicked({position: STONE_POSITION_FIELD, field, player: null})
     return
   }
   //houses
@@ -357,10 +354,9 @@ function canvasClick (x, y) {
   const fieldDistanceY = Math.sin((1/64)*2*Math.PI) * (minWidth/2 - 2*padding)
   const fieldDistance = Math.sqrt(Math.pow(fieldDistanceX, 2) + Math.pow(fieldDistanceY, 2))
   let base = Math.cos(0*2*Math.PI) * (minWidth/2 - 2*padding)
-  console.log(centerDistance, field)
   if (centerDistance < base && centerDistance > base-4*fieldDistance-fieldSize && field % 16 === 0) {
     boardClicked({
-      position: CLICK_POSITION_HOUSE,
+      position: STONE_POSITION_HOUSE,
       field: Math.round((base-centerDistance)/fieldDistance)-1,
       player: Math.round(field / 16)
     })
@@ -369,19 +365,19 @@ function canvasClick (x, y) {
   //boxes
   const boxRadius = Math.cos(0.25*Math.PI) * (minWidth/2 - 2*padding) * 0.5
   if (Math.sqrt(Math.pow(realX - canvas.width, 2) + Math.pow(realY, 2)) < boxRadius) {
-    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 0})
+    boardClicked({position: STONE_POSITION_BOX, field: null, player: 0})
     return
   }
   if (Math.sqrt(Math.pow(realX - canvas.width, 2) + Math.pow(realY - canvas.height, 2)) < boxRadius) {
-    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 1})
+    boardClicked({position: STONE_POSITION_BOX, field: null, player: 1})
     return
   }
   if (Math.sqrt(Math.pow(realX, 2) + Math.pow(realY - canvas.height, 2)) < boxRadius) {
-    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 2})
+    boardClicked({position: STONE_POSITION_BOX, field: null, player: 2})
     return
   }
   if (Math.sqrt(Math.pow(realX, 2) + Math.pow(realY, 2)) < boxRadius) {
-    boardClicked({position: CLICK_POSITION_BOX, field: null, player: 3})
+    boardClicked({position: STONE_POSITION_BOX, field: null, player: 3})
     return
   }
 }

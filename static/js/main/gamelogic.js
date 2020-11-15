@@ -6,7 +6,7 @@ function canPlayCard (game, playerIndex, card, movesLeft7) {
     case 4:
       return canMoveBackBy4(game, playerIndex)
     case 7:
-      return canMove7(game, playerIndex)
+      return canPlay7(game, playerIndex)
     case 8:
       return getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD) && game.players[playerIndex === 3 ? 0 : playerIndex+1].deck.length
     case 13:
@@ -65,8 +65,9 @@ function num2field (num) {
 }
 
 function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLeft7) {
+  const field = assembleGameField(game)
   let results = []
-  const stone = getPlayerStones(game, playerIndex).stones[stoneIndex]
+  const stone = getPlayerStones(game, playerIndex)[stoneIndex]
   if (stone.position === STONE_POSITION_FIELD) {
     if (cardNumber === 4) {
       let isFree = true
@@ -144,6 +145,7 @@ function getFieldsToHouse (playerIndex, stoneField, goingForward) {
 }
 
 function getMoveByXResults (game, playerIndex, stone, x) {
+  const field = assembleGameField(game)
   const fieldsToHouse = getFieldsToHouse(playerIndex, stone.field, x>0)
   const fieldsToGoInHouse = Math.abs(x) - fieldsToHouse
   if (stone.canGoToHouse && fieldsToGoInHouse >= 1 && fieldsToGoInHouse <= 4) {
@@ -186,7 +188,7 @@ function playCard(game, playerIndex, cardNumber) {
     if (getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD) && game.players[playerIndex === 3 ? 0 : playerIndex+1].deck.length)
       turnData.clickableFields.push({position: STONE_POSITION_BOX, playerIndex: (playerIndex === 3 ? 0 : playerIndex+1)})
     turnData.boardClickHandler = function (clickData) {
-      if (clickData.position === CLICK_POSITION_BOX) {
+      if (clickData.position === STONE_POSITION_BOX) {
         turnData.skipNext = true
         makeTurn()
       } else {
@@ -202,7 +204,7 @@ function playCard(game, playerIndex, cardNumber) {
   }
   if (cardNumber === 14) {
     game.players.forEach(p => {
-      turnData.clickableFields = p.stones.filter(s => s.position === STONE_POSITION_FIELD)
+      turnData.clickableFields = turnData.clickableFields.concat(p.stones.filter(s => s.position === STONE_POSITION_FIELD))
     })
     turnData.firstSwapStone = null
     turnData.boardClickHandler = function (clickData) {
@@ -231,10 +233,10 @@ function playCard(game, playerIndex, cardNumber) {
   }
   if ([1,13].includes(cardNumber)) {
     turnData.clickableFields = getStonesCanGoX(game, playerIndex, cardNumber)
-    if (getPlayerStones(game, playerIndex).stones.some(s => s.position === STONE_POSITION_BOX))
+    if (getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_BOX))
       turnData.clickableFields.push({position: STONE_POSITION_BOX, playerIndex: player.playsFor})
     turnData.boardClickHandler = function (clickData) {
-      if (clickData.position === CLICK_POSITION_BOX) {
+      if (clickData.position === STONE_POSITION_BOX) {
         const stoneIndex = getPlayerStones(game, playerIndex).indexOf(getPlayerStones(game, playerIndex).find(s => s.position === STONE_POSITION_BOX))
         const results = getStoneMoveResults(game, playerIndex, stoneIndex, cardNumber).filter(r => r.isStart)
         if (results.length) {
