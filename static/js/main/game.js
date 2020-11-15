@@ -60,6 +60,18 @@ const TURN_DATA_INIT = {
 let turnData = clone(TURN_DATA_INIT)
 let swappingCards = []
 
+const WARN_NOTHING = 0
+const WARN_GAME_OVER = 1
+const WARN_SKIP = 2
+const WARN_SWAP = 3
+const warnings = [
+  "",
+  "The game is over.",
+  "This Player will be skipped.",
+  "Pick a card to exchange with your teammate."
+]
+let warningTimeout = null
+
 if (canLoadGame()) //has saved game
   displayLoadGamePopup()
 else
@@ -126,6 +138,7 @@ function fillDecks () {
     p.canStart = p.deck.some(c => [1,13].includes(c[0]))
   })
   swappingCards = []
+  displayWarning(WARN_SWAP)
   drawGame()
   updateDeckdata()
   updateScreens()
@@ -147,7 +160,7 @@ function isPlayerDone (game, playerIndex) {
 function updateDeckdata () {
   //send new decks to clients
   const deckData = {}
-  game.players.forEach(p => deckData[p.name] = {deck: p.deck, canSelect: getSelectableCards(p)})
+  game.players.forEach(p => deckData[p.name] = {deck: p.deck, isSwapping: swappingCards !== null, canSelect: getSelectableCards(p)})
   socket.emit('client-update', {game: gameName, decks: deckData})
 }
 
@@ -321,15 +334,6 @@ function displaySelectedCard () {
 }
 
 
-const WARN_NOTHING = 0
-const WARN_GAME_OVER = 1
-const WARN_SKIP = 2
-const warnings = [
-  "",
-  "The game is over.",
-  "This Player will be skipped."
-]
-let warningTimeout = null
 function displayWarning (warningNum) {
   warningTimeout && clearTimeout(warningTimeout)
   document.getElementById("warning-box").innerHTML = warnings[warningNum]

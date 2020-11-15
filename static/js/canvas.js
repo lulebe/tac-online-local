@@ -4,8 +4,8 @@ const ctx = canvas.getContext("2d")
 let minWidth = 100, fieldDistance = 10, fieldSize = 10
 const padding = 10
 const PASTEL_COLORS = ['#f2dcfb', '#d3d3f3', '#fff6d5', '#cfffcd']
-const FULL_COLORS = ['#ba3ee8', '#3333bb', '#e9b700', '#0acd00']
-const DARK_COLORS = ['#8515af', '#26268d', '#c29800', '#09b900']
+const FULL_COLORS = ['#ba3ee8', '#3333bb', '#d08000', '#008a1b']
+const DARK_COLORS = ['#8515af', '#1e1e6e', '#955c00', '#004f0f']
 
 window.addEventListener('resize', resizeCanvas)
 

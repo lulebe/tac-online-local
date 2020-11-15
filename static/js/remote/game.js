@@ -9,7 +9,7 @@ socket.on('update', data => {
   currentDeck = data.deck
   canSelect = data.canSelect
   displayDeck(currentDeck)
-  
+  displaySwapInfo(data.isSwapping)
 })
 
 function displayDeck (deck) {
@@ -27,6 +27,10 @@ function displayDeck (deck) {
       if (card[1] === 1) cardContainer.classList.add('selected')
     }
   }
+}
+
+function displaySwapInfo (show) {
+  document.getElementById('swap-info').style.display = show ? 'block' : 'none'
 }
 
 for (let i = 0; i < 5; i++) {
