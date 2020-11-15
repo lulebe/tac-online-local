@@ -42,8 +42,7 @@ let game = {
   players: players.map((name, i) => ({name, teamB: i % 2 === 1, canStart: false, playsFor: i, connected: false, deck: [], stones: initStones()})),
   box: makeBox(),
   usedCards: [],
-  turn: 0,
-  currentStartingPlayer: 0
+  turn: 0
 }
 let preTurnGame = clone(game)
 let unTacGame = null
@@ -353,9 +352,9 @@ function loadGame () {
   document.getElementById('loadgame-popup').classList.remove('visible')
   const loadedGame = JSON.parse(window.localStorage.getItem('game'))
   game.players = loadedGame.players
-  game.box = loadedGame.box
-  game.table = loadedGame.table
+  game.usedCards = loadedGame.usedCards
   game.turn = loadedGame.turn
+  game.box = loadedGame.turn
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
   displayScoreboard()
   initCanvas()
