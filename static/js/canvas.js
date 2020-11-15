@@ -196,6 +196,13 @@ function drawBoxes () {
   ctx.arc(canvas.width, canvas.height, diameter / 2, 0, 2 * Math.PI)
   ctx.fill()
   ctx.stroke()
+  ctx.fillStyle = '#555555'
+  ctx.font = (diameter*0.15) + 'px Arial'
+  ctx.textAlign = 'center'
+  ctx.fillText(1, canvas.width - diameter/6, diameter/4.5)
+  ctx.fillText(2, canvas.width - diameter/6, canvas.height - diameter/8.7)
+  ctx.fillText(3, diameter/6, canvas.height - diameter/8.7)
+  ctx.fillText(4, diameter/6, diameter/4.5)
 }
 
 function drawNoUsedCards () {

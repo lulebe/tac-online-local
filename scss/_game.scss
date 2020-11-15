@@ -52,9 +52,21 @@
     &:not(:first-child) {
       border-top: 1px solid #aaa;
     }
-    background: #cfc;
+    border-right: 8px solid #3b3;
     &.team-b {
-      background: #fcc;
+      border-right: 8px solid #b33;
+    }
+    &:nth-child(1) {
+      background-color: #f2dcfb;
+    }
+    &:nth-child(2) {
+      background-color: #d3d3f3;
+    }
+    &:nth-child(3) {
+      background-color: #fff6d5;
+    }
+    &:nth-child(4) {
+      background-color: #cfffcd;
     }
   }
   .color-marker {

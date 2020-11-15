@@ -8,6 +8,7 @@
   const players = {{ players | raw }}
 </script>
 <script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/static/js/warnings.js"></script>
 <script type="text/javascript" src="/static/js/canvas_cards.js"></script>
 <script type="text/javascript" src="/static/js/canvas.js"></script>
 <script type="text/javascript" src="/static/js/cardinfo.js"></script>
@@ -28,6 +29,7 @@
     <ul id="scoreboard"></ul>
   </div>
   <div class="game-misc">
+    <div id="play-coop"><strong>Playing for teammate.</strong><br><br></div>
     Current card:<br><br>
     <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-img">
     <span id="card-info">No card is selected.</span>

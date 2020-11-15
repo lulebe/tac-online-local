@@ -60,16 +60,6 @@ const TURN_DATA_INIT = {
 let turnData = clone(TURN_DATA_INIT)
 let swappingCards = []
 
-const WARN_NOTHING = 0
-const WARN_GAME_OVER = 1
-const WARN_SKIP = 2
-const WARN_SWAP = 3
-const warnings = [
-  "",
-  "The game is over.",
-  "This Player will be skipped.",
-  "Pick a card to exchange with your teammate."
-]
 let warningTimeout = null
 
 if (canLoadGame()) //has saved game
@@ -318,6 +308,7 @@ function displayLoadGamePopup () {
 
 function displayCurrentPlayer () {
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
+  document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'block' : 'none'
 }
 
 

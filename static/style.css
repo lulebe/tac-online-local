@@ -133,7 +133,7 @@ button:disabled, .btn:disabled {
   padding: 12px;
   position: relative;
   padding-left: 42px;
-  background: #cfc;
+  border-right: 8px solid #3b3;
 }
 #scoreboard li.turn {
   font-weight: bold;
@@ -142,7 +142,19 @@ button:disabled, .btn:disabled {
   border-top: 1px solid #aaa;
 }
 #scoreboard li.team-b {
-  background: #fcc;
+  border-right: 8px solid #b33;
+}
+#scoreboard li:nth-child(1) {
+  background-color: #f2dcfb;
+}
+#scoreboard li:nth-child(2) {
+  background-color: #d3d3f3;
+}
+#scoreboard li:nth-child(3) {
+  background-color: #fff6d5;
+}
+#scoreboard li:nth-child(4) {
+  background-color: #cfffcd;
 }
 #scoreboard .color-marker {
   position: absolute;

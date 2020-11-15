@@ -232,6 +232,7 @@ function playCard(game, playerIndex, cardNumber) {
         game.players.forEach(p => {
           turnData.clickableFields = turnData.clickableFields.concat(p.stones.filter(s => s.position === STONE_POSITION_FIELD && s.field !== clickData.field))
         })
+        updateScreens()
       } else {
         const stoneField = assembleGameField(game)[clickData.field]
         const secondStone = game.players[stoneField.player].stones[stoneField.stone]
