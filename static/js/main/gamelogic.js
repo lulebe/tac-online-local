@@ -236,9 +236,9 @@ function playCard(game, playerIndex, cardNumber) {
       } else {
         const stoneField = assembleGameField(game)[clickData.field]
         const secondStone = game.players[stoneField.player].stones[stoneField.stone]
+        secondStone.field = turnData.firstSwapStone.field
         turnData.firstSwapStone.field = clickData.field
         turnData.firstSwapStone.canGoToHouse = true
-        secondStone.field = turnData.firstSwapStone.field
         secondStone.canGoToHouse = true
         makeTurn()
       }
