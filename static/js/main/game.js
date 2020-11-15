@@ -182,6 +182,8 @@ function swapCards () {
   })
   swappingCards = null
   updateDeckdata()
+  displayScoreboard()
+  updateScreens()
 }
 
 
@@ -203,24 +205,22 @@ function handleCardSelection () {
   } else {
     playCard(game, game.turn, selectedCard[0])
     updateScreens()
-    drawGame()
   }
   updateDeckdata()
+  drawGame()
 }
 
 
 function boardClicked (data) {
-  console.log(data)
-  console.log(turnData.clickableFields)
   let canClickHere = false
   if (data.position === STONE_POSITION_BOX) {
-    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_BOX && f.playerIndex === data.player)
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_BOX && f.playerIndex === data.playerIndex)
   }
   if (data.position === STONE_POSITION_FIELD) {
     canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_FIELD && f.field === data.field)
   }
   if (data.position === STONE_POSITION_HOUSE) {
-    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_HOUSE && f.playerIndex === data.player && f.field === data.field)
+    canClickHere = turnData.clickableFields.some(f => f.position === STONE_POSITION_HOUSE && f.playerIndex === data.playerIndex && f.field === data.field)
   }
   if (turnData.boardClickHandler && canClickHere) {
     turnData.boardClickHandler(data)
