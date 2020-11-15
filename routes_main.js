@@ -18,6 +18,7 @@ router.post('/start_game', (req, res) => {
   twing.render('main/game.twig', {gameName: game.name, players: JSON.stringify(playerOrder)}).then(rendered => res.end(rendered))
 })
 
-router.get('/start_game', (req, res) => {
-  twing.render('main/game.twig', {gameName: "TEST", players: JSON.stringify(['test1','test2','test3','test4'])}).then(rendered => res.end(rendered))
-})
+if (process.env.NODE_ENV != 'production')
+  router.get('/start_game', (req, res) => {
+    twing.render('main/game.twig', {gameName: "TEST", players: JSON.stringify(['test1','test2','test3','test4'])}).then(rendered => res.end(rendered))
+  })
