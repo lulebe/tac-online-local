@@ -76,7 +76,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     if (sortedHouseStones[0]) {
       fieldsToGo = sortedHouseStones[0].field - stone.field
     }
-    if (fieldsToGo >= cardNumber && stone.canMove) {
+    if (fieldsToGo >= cardNumber  && fieldsToGo > 0 && stone.canMove) {
       results.push({
         stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber, canGoToHouse: true},
         removed: []
@@ -305,10 +305,3 @@ function removeStones(removedStones) {
     stone.field = null
   })
 }
-//N7
-/*
-outside house = can always go 7 forward
-into house = if 3 stones already in, check if move to field 0 uses the whole 7;
-             if not 3 in, always works (given free field 0)
-inside house = works if adjacent field free
-*/
