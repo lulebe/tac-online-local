@@ -14,6 +14,7 @@ socket.on('game-data', data => {
   drawGame()
   displayScoreboard()
   displayCurrentPlayer()
+  displaySelectedCard()
 })
 socket.on('warning', data => {
   displayWarning(data.warningNum)
@@ -38,6 +39,13 @@ function displayScoreboard () {
 function displayCurrentPlayer () {
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
   document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'block' : 'none'
+}
+
+function displaySelectedCard () {
+  const selCard = game.players[game.turn].deck.find(c => c[1] === 1)
+  const cardNumber = turnData.tacNewCard || (selCard && selCard[0]) || 0
+  document.getElementById('card-img').src = '/static/imgs/cards/' + (cardNumber) + '.png'
+  document.getElementById('card-info').innerHTML = CARD_INFO[cardNumber]
 }
 
 
