@@ -38,7 +38,7 @@ function displayScoreboard () {
 
 function displayCurrentPlayer () {
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
-  document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'block' : 'none'
+  document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'none' : 'block'
 }
 
 function displaySelectedCard () {

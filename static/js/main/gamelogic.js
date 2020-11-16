@@ -76,7 +76,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     if (sortedHouseStones[0]) {
       fieldsToGo = sortedHouseStones[0].field - stone.field
     }
-    if (fieldsToGo >= cardNumber) {
+    if (fieldsToGo >= cardNumber && stone.canMove) {
       results.push({
         stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber, canGoToHouse: true},
         removed: []

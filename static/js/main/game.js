@@ -238,6 +238,8 @@ function makeTurn () {
   game.players[game.turn].deck.splice(game.players[game.turn].deck.indexOf(selectedCard), 1)
   game.usedCards.push(selectedCard[0])
   lockHouseStones(game, game.players[game.turn].playsFor)
+  if (isPlayerDone(game, game.turn))
+  game.players[game.turn].playsFor = TEAMMATE_INDEX[game.turn]
   toNextTurn()
 }
 
@@ -307,7 +309,7 @@ function displayLoadGamePopup () {
 
 function displayCurrentPlayer () {
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
-  document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'block' : 'none'
+  document.getElementById('play-coop').style.display = game.players[game.turn].playsFor === game.turn ? 'none' : 'block'
 }
 
 
