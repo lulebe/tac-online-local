@@ -10,8 +10,8 @@ const DARK_COLORS = ['#8515af', '#1e1e6e', '#955c00', '#004f0f']
 window.addEventListener('resize', resizeCanvas)
 
 function resizeCanvas () {
-  document.getElementById("game-canvas").width = document.getElementById("game-table").clientWidth -10
-  document.getElementById("game-canvas").height = document.getElementById("game-table").clientHeight -10
+  document.getElementById("game-canvas").width = document.body.clientWidth - document.body.clientWidth*0.3 - 2 - 4
+  document.getElementById("game-canvas").height = window.innerHeight - 64 - 4
   minWidth = Math.min(canvas.width, canvas.height)
   const fieldDistanceX = Math.cos((1/64)*2*Math.PI) * (minWidth/2 - 2*padding) - (minWidth/2 - 2*padding)
   const fieldDistanceY = Math.sin((1/64)*2*Math.PI) * (minWidth/2 - 2*padding)

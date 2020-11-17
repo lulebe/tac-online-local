@@ -17,25 +17,28 @@
 {% endblock %}
 
 {% block main %}
-<div class="game-layout">
-  <div class="game-header">
-    <h1>playing Game {{ gameName }}: <span id="turn-player"></span>'s turn</h1>
+<canvas id="game-canvas"></canvas>
+<div class="game-header">
+  <h1>playing Game {{ gameName }}: <span id="turn-player"></span>'s turn</h1>
+</div>
+<div class="game-row">
+  <div id="game-table"></div>
+  <div class="game-sideboard">
+    <div class="game-scoreboard">
+      <h2>Players</h2>
+      <ul id="scoreboard"></ul>
+    </div>
+    <div class="game-misc">
+      <div id="play-coop"><strong>Playing for teammate.</strong><br><br></div>
+      Current card:<br><br>
+      <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-img">
+      <span id="card-info">No card is selected.</span>
+      <div style="clear: both; margin-bottom: 16px;"></div>
+      <div id="warning-box">This is a test warning.</div>
+    </div>
   </div>
-  <div id="game-table">
-    <canvas id="game-canvas"></canvas>
-  </div>
-  <div class="game-scoreboard">
-    <h2>Players</h2>
-    <ul id="scoreboard"></ul>
-  </div>
-  <div class="game-misc">
-    <div id="play-coop"><strong>Playing for teammate.</strong><br><br></div>
-    Current card:<br><br>
-    <img src="/static/imgs/cards/0.png" style="height: 150px; float: left; margin-right: 16px;" id="card-img">
-    <span id="card-info">No card is selected.</span>
-    <div style="clear: both; margin-bottom: 16px;"></div>
-    <div id="warning-box">This is a test warning.</div>
-  </div>
+</div>
+  
 </div>
 <div id="loadgame-popup">
   <div id="loadgame-modal">
