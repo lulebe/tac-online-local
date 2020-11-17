@@ -340,6 +340,7 @@ function saveGame () {
     game.players[i].teamB = (i % 2 === 1)
   }
   window.localStorage.setItem('game', JSON.stringify(game))
+  window.localStorage.setItem('turnData', JSON.stringify(turnData))
 }
 
 
@@ -356,7 +357,8 @@ function loadGame () {
   game.players = loadedGame.players
   game.usedCards = loadedGame.usedCards
   game.turn = loadedGame.turn
-  game.box = loadedGame.turn
+  game.box = loadedGame.box
+  turnData = JSON.parse(window.localStorage.getItem('turnData')
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
   displayScoreboard()
   initCanvas()
