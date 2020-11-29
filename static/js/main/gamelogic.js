@@ -72,7 +72,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     let fieldsToGo = 3 - stone.field
     const sortedHouseStones = getPlayerStones(game, playerIndex)
         .filter(s => s.position === STONE_POSITION_HOUSE && s !== stone)
-        .sort((a, b) => a.field > b.field)
+        .sort((a, b) => a.field < b.field)
     if (sortedHouseStones[0]) {
       fieldsToGo = sortedHouseStones[0].field - stone.field -1
     }
@@ -87,7 +87,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     if (stone.position === STONE_POSITION_HOUSE && stone.canMove) {
       const sortedHouseStones = getPlayerStones(game, playerIndex)
       .filter(s => s.position === STONE_POSITION_HOUSE)
-      .sort((a, b) => a.field > b.field)
+      .sort((a, b) => a.field < b.field)
       if (stone.field < 3 && !sortedHouseStones.some(s => s.field === stone.field+1)) {
         results.push({
           stone: {position: STONE_POSITION_HOUSE, field: stone.field+1, canGoToHouse: true, canMove: true},
@@ -140,16 +140,17 @@ function lockHouseStones (game, playerIndex) {
   }
 }
 
-function getFieldsToHouse (playerIndex, stoneField, goingForward) {
-  const transformedField = num2field(stoneField - playerIndex * 16)
+function getFieldsToHouse (game, playerIndex, stoneField, goingForward) {
+  const transformedField = num2field(stoneField - game.players[playerIndex].playsFor * 16)
   if (!goingForward) return transformedField
   return 64 - (transformedField === 0 ? 64 : transformedField)
 }
 
 function getMoveByXResults (game, playerIndex, stone, x) {
   const results = []
+  if (!stone.canMove) return results
   const field = assembleGameField(game)
-  const fieldsToHouse = getFieldsToHouse(playerIndex, stone.field, x>0)
+  const fieldsToHouse = getFieldsToHouse(game, playerIndex, stone.field, x>0)
   const fieldsToGoInHouse = Math.abs(x) - fieldsToHouse
   if (stone.canGoToHouse && fieldsToGoInHouse >= 1 && fieldsToGoInHouse <= 4) {
     let isFree = true
@@ -158,7 +159,7 @@ function getMoveByXResults (game, playerIndex, stone, x) {
     }
     const sortedHouseStones = getPlayerStones(game, playerIndex)
       .filter(s => s.position === STONE_POSITION_HOUSE)
-      .sort((a, b) => a.field > b.field)
+      .sort((a, b) => a.field < b.field)
     let isFreeInHouse = sortedHouseStones[0] ? sortedHouseStones[0].field > (fieldsToGoInHouse-1) : true
     if (isFree && isFreeInHouse) {
       results.push({
