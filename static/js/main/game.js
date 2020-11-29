@@ -358,7 +358,7 @@ function loadGame () {
   game.usedCards = loadedGame.usedCards
   game.turn = loadedGame.turn
   game.box = loadedGame.box
-  turnData = JSON.parse(window.localStorage.getItem('turnData')
+  turnData = JSON.parse(window.localStorage.getItem('turnData'))
   document.getElementById('turn-player').innerHTML = game.players[game.turn].name
   displayScoreboard()
   initCanvas()
