@@ -63,7 +63,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
   if ([1,13].includes(cardNumber) && stone.position === STONE_POSITION_BOX) {
     const stoneOnStart = field[num2field(game.players[playerIndex].playsFor * 16)]
     results.push({
-      stone: {position: STONE_POSITION_FIELD, field: game.players[playerIndex].playsFor * 16, canGoToHouse: false},
+      stone: {position: STONE_POSITION_FIELD, field: game.players[playerIndex].playsFor * 16, canGoToHouse: false, canMove: true},
       removed: stoneOnStart ? [stoneOnStart] : [],
       isStart: true
     })
@@ -78,7 +78,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
     }
     if (fieldsToGo >= cardNumber) {
       results.push({
-        stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber, canGoToHouse: true},
+        stone: {position: STONE_POSITION_HOUSE, field: stone.field + cardNumber, canGoToHouse: true, canMove: true},
         removed: []
       })
     }
