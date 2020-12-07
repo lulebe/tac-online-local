@@ -68,7 +68,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
       isStart: true
     })
   }
-  if (stone.position === STONE_POSITION_HOUSE && [1,2,3].includes(cardNumber)) {
+  if (stone.position === STONE_POSITION_HOUSE && [1,2,3].includes(cardNumber) && stone.canMove) {
     let fieldsToGo = 3 - stone.field
     const sortedHouseStones = getPlayerStones(game, playerIndex)
         .filter(s => s.position === STONE_POSITION_HOUSE && s !== stone)
@@ -105,9 +105,9 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
       if (fieldMoveResults.some(r => r.stone.position === STONE_POSITION_HOUSE)) {
         if ((movesLeft7 || 7) > 1 && getPlayerStones(game, playerIndex).filter(s => s.position === STONE_POSITION_HOUSE).length === 3) {
           let playerToCheck = null
-          if (game.players[playerIndex].playsFor === playerIndex && !isPlayerDone(TEAMMATE_INDEX[playerIndex]))
+          if (game.players[playerIndex].playsFor === playerIndex && !isPlayerDone(game, TEAMMATE_INDEX[playerIndex]))
             playerToCheck = TEAMMATE_INDEX[playerIndex]
-          if (playerToCheck !== null && !canPlayCard(game, playerIndex, 7, (movesLeft7 || 7) - 1))
+          if (playerToCheck !== null && !canPlayCard(game, playerToCheck, 7, (movesLeft7 || 7) - 1))
             fieldMoveResults = fieldMoveResults.filter(r => r.stone.position !== STONE_POSITION_HOUSE)
         }
       }
