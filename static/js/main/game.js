@@ -341,6 +341,7 @@ function saveGame () {
   }
   window.localStorage.setItem('game', JSON.stringify(game))
   window.localStorage.setItem('turnData', JSON.stringify(turnData))
+  window.localStorage.setItem('swappingCards', JSON.stringify(swappingCards))
 }
 
 
@@ -359,12 +360,12 @@ function loadGame () {
   game.turn = loadedGame.turn
   game.box = loadedGame.box
   turnData = JSON.parse(window.localStorage.getItem('turnData'))
-  document.getElementById('turn-player').innerHTML = game.players[game.turn].name
+  swappingCards = JSON.parse(window.localStorage.getItem('swappingCards'))
   displayScoreboard()
   initCanvas()
-  updateScreens()
   updateDeckdata()
   displayCurrentPlayer()
+  updateScreens()
 }
 
 
