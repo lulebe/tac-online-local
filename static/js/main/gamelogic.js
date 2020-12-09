@@ -251,6 +251,7 @@ function playCard(game, playerIndex, cardNumber) {
     displaySelectedCard()
     drawGame()
     updateScreens()
+    displayWarning(4)
     playCard(game, playerIndex, turnData.tacNewCard)
   }
   if ([1,13].includes(cardNumber)) {

@@ -6,6 +6,8 @@ socket.on('connect', function(){
   socket.emit('remote-data', {game: gameName, user: userName})
 })
 socket.on('update', data => {
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('waiting').style.display = 'none'
   currentDeck = data.deck
   canSelect = data.canSelect
   displayDeck(currentDeck)
