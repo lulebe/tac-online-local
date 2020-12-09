@@ -247,6 +247,7 @@ function playCard(game, playerIndex, cardNumber) {
   }
   if (cardNumber === 15) {
     game.players.forEach((p, i) => p.stones = unTacGame.players[i].stones)
+    game.players.forEach((p, i) => p.playsFor = unTacGame.players[i].playsFor)
     turnData.tacNewCard = getLastNonTacCard()
     displaySelectedCard()
     drawGame()
