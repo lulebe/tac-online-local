@@ -31,8 +31,8 @@ module.exports =  {
       })
       client.on('remove-player', data => {
         if (!client.hostsGame) return
-        games.removePlayer(game, data)
-        updatePlayers(game)
+        games.removePlayer(client.hostsGame, data)
+        updatePlayers(client.hostsGame)
       })
       client.on('remote-data', data => {
         const game = games.getGame(data.game)
@@ -84,7 +84,7 @@ module.exports =  {
           game.screens.forEach(screen => screen.emit('warning', data))
       })
       client.on('disconnect', () => {
-        if (client.playsGame) {
+        if (client.playsGame && client.playsGame.players.find(player => player.client == client)) {
           client.playsGame.players.find(player => player.client == client).client = null
           updatePlayers(client.playsGame)
           client.playsGame = null

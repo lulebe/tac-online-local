@@ -43,6 +43,8 @@ function removeInactiveGames () {
 
 function removePlayer (game, playerName) {
   const pIndex = game.players.indexOf(game.players.find(p => p.name === playerName))
-  if (pIndex >= 0)
-    game.players.splice(pIndex, 0)
+  if (pIndex >= 0) {
+    const p = game.players.splice(pIndex, 1)
+    if (p.client) p.client.playsGame = null
+  }
 }

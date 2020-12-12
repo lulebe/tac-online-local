@@ -7,11 +7,13 @@ socket.on('players', function(data) {
 })
 
 let players = []
+let playerTeams = {}
 
 function updatePlayers (playerList) {
   players = playerList
   for (let i = 0; i < players.length; i++) {
-    players[i].teamB = (i % 2 === 1)
+    if (!playerTeams[players[i].name]) playerTeams[players[i].name] = (i % 2 === 1) ? 'B' : 'A'
+    players[i].teamB = playerTeams[players[i].name] == 'B'
   }
   displayPlayers()
 }
@@ -25,7 +27,7 @@ function displayPlayers () {
     <li onclick="togglePlayerTeam(${i})" class="${player.teamB ? "team-b" : ""}">
       <div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>
       ${player.name}: Team ${player.teamB ? "B" : "A"}
-      <button onClick="deletePlayer(${i})" class="remove-player-btn">X</button>
+      <button onClick="deletePlayer(event, ${i})" class="remove-player-btn">X</button>
     </li>
     `
   }
@@ -40,14 +42,14 @@ function displayPlayers () {
 }
 
 function togglePlayerTeam (playerIndex) {
-  players[playerIndex].teamB = !players[playerIndex].teamB
+  playerTeams[players[playerIndex].name] = playerTeams[players[playerIndex].name] == 'A' ? 'B' : 'A'
+  players[playerIndex].teamB = playerTeams[players[playerIndex].name] == 'B'
   displayPlayers()
 }
 
-function deletePlayer (playerIndex) {
-  players.splice(playerIndex, 1)
+function deletePlayer (e, playerIndex) {
+  e.stopPropagation()
   socket.emit('remove-player', players[playerIndex].name)
-  displayPlayers()
 }
 
 function checkTeamsCorrect () {
