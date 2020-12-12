@@ -20,6 +20,9 @@ socket.on('players', function(data) {
   updateDeckdata()
 })
 const SE_CLICKED_FIELD = 1
+socket.on('screen-connected', () => {
+  updateScreens()
+})
 socket.on('screen-event', data => {
   switch (data.event) {
     case SE_CLICKED_FIELD:
@@ -239,7 +242,7 @@ function makeTurn () {
   game.usedCards.push(selectedCard[0])
   lockHouseStones(game, game.players[game.turn].playsFor)
   if (isPlayerDone(game, game.turn))
-  game.players[game.turn].playsFor = TEAMMATE_INDEX[game.turn]
+    game.players[game.turn].playsFor = TEAMMATE_INDEX[game.turn]
   toNextTurn()
 }
 

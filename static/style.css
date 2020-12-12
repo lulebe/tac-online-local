@@ -76,6 +76,12 @@ button:disabled, .btn:disabled {
 #setup-player-list li .color-marker.disconnected {
   background: red;
 }
+#setup-player-list .remove-player-btn {
+  float: right;
+  margin-top: -4px;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
 
 #loadgame-info {
   display: none;
@@ -266,6 +272,11 @@ html, body {
 }
 .remote-card-container img {
   height: 200px;
+}
+
+#waiting {
+  text-align: center;
+  padding: 24px;
 }
 
 * {

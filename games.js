@@ -2,16 +2,16 @@ const customAlphabet = require('nanoid/non-secure').customAlphabet
 
 const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNPQRSTUVWXYZ', 5)
 
-//game: {name: String, players: [{name: String, client: Socket(client)}], host: Socket(host), screens:[Socket()], nextScreenNum: Int, lastActive: Int(Timestamp)}
+//game: {name: String, players: [{name: String, client: Socket(client)}], host: Socket(host), screens:[Socket()], lastActive: Int(Timestamp)}
 const games = []
 
 if (process.env.NODE_ENV != 'production')
-games.push({name: 'TEST', players: [{name: 'test1', client: null},{name: 'test2', client: null},{name: 'test3', client: null},{name: 'test4', client: null}], host: null, screens: [], nextScreenNum: 1, lastActive: (new Date()).getTime()})
+games.push({name: 'TEST', players: [{name: 'test1', client: null},{name: 'test2', client: null},{name: 'test3', client: null},{name: 'test4', client: null}], host: null, screens: [], lastActive: (new Date()).getTime()})
 
 setInterval(removeInactiveGames, 10000)
 
 module.exports = {
-  makeGame, getGame, removeGame, getScreenById
+  makeGame, getGame, removeGame, removePlayer
 }
 
 function getGame (name) {
@@ -20,16 +20,12 @@ function getGame (name) {
   return game
 }
 
-function getScreenById (game, id) {
-  return game.screens.find(screen => screen.screenId == id)
-}
-
 function makeGame () {
   let gameName = nanoid()
   while (getGame(gameName) != null) {
     gameName = nanoid()
   }
-  const game = {name: gameName, players: [], host: null, screens: [], nextScreenNum: 1, lastActive: (new Date()).getTime()}
+  const game = {name: gameName, players: [], host: null, screens: [], lastActive: (new Date()).getTime()}
   games.push(game)
   return game
 }
@@ -43,4 +39,10 @@ function removeInactiveGames () {
     if (game.lastActive && game.lastActive < ((new Date()).getTime() - 10800000))
       removeGame(game)
   })
+}
+
+function removePlayer (game, playerName) {
+  const pIndex = game.players.indexOf(game.players.find(p => p.name === playerName))
+  if (pIndex >= 0)
+    game.players.splice(pIndex, 0)
 }

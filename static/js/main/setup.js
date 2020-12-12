@@ -25,6 +25,7 @@ function displayPlayers () {
     <li onclick="togglePlayerTeam(${i})" class="${player.teamB ? "team-b" : ""}">
       <div class="color-marker ${player.connected ? "connected" : "disconnected"}"></div>
       ${player.name}: Team ${player.teamB ? "B" : "A"}
+      <button onClick="deletePlayer(${i})" class="remove-player-btn">X</button>
     </li>
     `
   }
@@ -40,6 +41,12 @@ function displayPlayers () {
 
 function togglePlayerTeam (playerIndex) {
   players[playerIndex].teamB = !players[playerIndex].teamB
+  displayPlayers()
+}
+
+function deletePlayer (playerIndex) {
+  players.splice(playerIndex, 1)
+  socket.emit('remove-player', players[playerIndex].name)
   displayPlayers()
 }
 

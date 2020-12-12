@@ -26,9 +26,13 @@ module.exports =  {
         if (game) {
           game.screens.push(client)
           client.screensGame = game
-          client.screenId = game.nextScreenId
-          game.nextScreenId++
+          game.host && game.host.emit('screen-connected')
         }
+      })
+      client.on('remove-player', data => {
+        if (!client.hostsGame) return
+        games.removePlayer(game, data)
+        updatePlayers(game)
       })
       client.on('remote-data', data => {
         const game = games.getGame(data.game)

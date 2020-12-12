@@ -26,6 +26,7 @@ function canPlayCard (game, playerIndex, card, movesLeft7) {
 function canMoveCard (game, playerIndex, cardNumber, movesLeft7) {
   return getPlayerStones(game, playerIndex).map((_, i) => getStoneMoveResults(game, playerIndex, i, cardNumber, movesLeft7)).some(r => !!r.length)
 }
+
 function canPlay7 (game, playerIndex) {
   if (getPlayerStones(game, playerIndex).some(s => s.position === STONE_POSITION_FIELD))
     return true
@@ -154,7 +155,7 @@ function getMoveByXResults (game, playerIndex, stone, x) {
   const fieldsToGoInHouse = Math.abs(x) - fieldsToHouse
   if (stone.canGoToHouse && fieldsToGoInHouse >= 1 && fieldsToGoInHouse <= 4) {
     let isFree = true
-    for (let j = 1; j < fieldsToHouse; j++) {
+    for (let j = 1; j <= fieldsToHouse; j++) {
       if (field[num2field(x>0 ? (stone.field + j) : (stone.field - j))] !== null) isFree = false
     }
     const sortedHouseStones = getPlayerStones(game, playerIndex)
@@ -193,6 +194,8 @@ function playCard(game, playerIndex, cardNumber) {
       if (results.length) {
         getPlayerStones(game, playerIndex)[stoneIndex] = results[0].stone
         removeStones(results[0].removed)
+        if (isPlayerDone(game, playerIndex))
+          game.players[playerIndex].playsFor = TEAMMATE_INDEX[playerIndex]
         turnData.movesLeft7--
         if (turnData.movesLeft7 === 0) {
           makeTurn()
