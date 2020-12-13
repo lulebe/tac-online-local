@@ -108,7 +108,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
           let playerToCheck = null
           if (game.players[playerIndex].playsFor === playerIndex && !isPlayerDone(game, TEAMMATE_INDEX[playerIndex]))
             playerToCheck = TEAMMATE_INDEX[playerIndex]
-          if (playerToCheck !== null && !canPlayCard(game, playerToCheck, 7, (movesLeft7 || 7) - 1))
+          if (game.players[playerIndex].playsFor !== playerIndex || (playerToCheck !== null && !canPlayCard(game, playerToCheck, 7, (movesLeft7 || 7) - 1)))
             fieldMoveResults = fieldMoveResults.filter(r => r.stone.position !== STONE_POSITION_HOUSE)
         }
       }
