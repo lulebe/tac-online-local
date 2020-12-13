@@ -196,6 +196,12 @@ function playCard(game, playerIndex, cardNumber) {
         removeStones(results[0].removed)
         if (isPlayerDone(game, playerIndex))
           game.players[playerIndex].playsFor = TEAMMATE_INDEX[playerIndex]
+        const allDone = game.players[playerIndex].playsFor == TEAMMATE_INDEX[playerIndex] && isPlayerDone(TEAMMATE_INDEX[playerIndex])
+        const canTac = getSelectableCards(game.players[(playerIndex+1) > 3 ? 0 : playerIndex+1]).includes(15)
+        if (allDone && canTac) {
+          gameEnd()
+          return
+        }
         turnData.movesLeft7--
         if (turnData.movesLeft7 === 0) {
           makeTurn()
