@@ -196,7 +196,7 @@ function playCard(game, playerIndex, cardNumber) {
         removeStones(results[0].removed)
         if (isPlayerDone(game, playerIndex))
           game.players[playerIndex].playsFor = TEAMMATE_INDEX[playerIndex]
-        if (isPlayerDone(playerIndex) && isPlayerDone(TEAMMATE_INDEX[playerIndex])) {
+        if (isPlayerDone(game, playerIndex) && isPlayerDone(game, TEAMMATE_INDEX[playerIndex])) {
           makeTurn()
           return
         }
