@@ -72,7 +72,7 @@ function getStoneMoveResults (game, playerIndex, stoneIndex, cardNumber, movesLe
   if (stone.position === STONE_POSITION_HOUSE && [1,2,3].includes(cardNumber) && stone.canMove) {
     let fieldsToGo = 3 - stone.field
     const sortedHouseStones = getPlayerStones(game, playerIndex)
-        .filter(s => s.position === STONE_POSITION_HOUSE && s !== stone)
+        .filter(s => s.position === STONE_POSITION_HOUSE && s !== stone && s.field > stone.field)
         .sort((a, b) => a.field - b.field)
     if (sortedHouseStones[0]) {
       fieldsToGo = sortedHouseStones[0].field - stone.field -1
