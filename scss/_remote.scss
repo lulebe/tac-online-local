@@ -29,3 +29,13 @@
   text-align: center;
   padding: 24px;
 }
+
+#remote-confirmation-dialog {
+  text-align: center;
+  .dialog-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+}

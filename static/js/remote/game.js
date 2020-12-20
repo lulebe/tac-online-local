@@ -1,5 +1,6 @@
 let currentDeck = []
 let canSelect = []
+let indexToConfirm = null
 
 const socket = io(window.location.origin);
 socket.on('connect', function(){
@@ -45,9 +46,34 @@ for (let i = 0; i < 5; i++) {
     }
     if (!currentDeck[i] || !canSelect.includes(i)) return
     if (isUnselected) { //select
-      element.classList.add('selected')
-      currentDeck[i][1] = 1
+      showConfirmationDialog(i)
     }
     socket.emit('selection-change', {player: userName, deck: currentDeck})
   })
 }
+
+function showConfirmationDialog (i) {
+  indexToConfirm = i
+  document.getElementById('card-confirmation').src = "/static/imgs/cards/"+currentDeck[i][0]+".png"
+  document.getElementById('main').style.display = 'none'
+  document.getElementById('remote-confirmation-dialog').style.display = 'block'
+}
+
+function cancelSelection () {
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('remote-confirmation-dialog').style.display = 'none'
+  indexToConfirm = null
+}
+
+function confirmSelection () {
+  if (indexToConfirm == null) return
+  document.getElementById('card-container-'+indexToConfirm).classList.add('selected')
+  currentDeck[indexToConfirm][1] = 1
+  socket.emit('selection-change', {player: userName, deck: currentDeck})
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('remote-confirmation-dialog').style.display = 'none'
+  indexToConfirm = null
+}
+
+document.getElementById('cancel').addEventListener('click', cancelSelection)
+document.getElementById('confirm').addEventListener('click', confirmSelection)
