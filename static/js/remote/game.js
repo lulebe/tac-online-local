@@ -1,5 +1,6 @@
 let currentDeck = []
 let canSelect = []
+let isSwapping = false
 let indexToConfirm = null
 
 const socket = io(window.location.origin);
@@ -7,12 +8,15 @@ socket.on('connect', function(){
   socket.emit('remote-data', {game: gameName, user: userName})
 })
 socket.on('update', data => {
+  if(!hasDataChanged(data)) return
   document.getElementById('main').style.display = 'block'
   document.getElementById('waiting').style.display = 'none'
+  cancelSelection()
   currentDeck = data.deck
   canSelect = data.canSelect
+  isSwapping = data.isSwapping
   displayDeck(currentDeck)
-  displaySwapInfo(data.isSwapping)
+  displaySwapInfo(isSwapping)
 })
 
 function displayDeck (deck) {
@@ -44,7 +48,7 @@ for (let i = 0; i < 5; i++) {
     for (let j = 0; j < 5; j++) {
       document.getElementById('card-container-'+j).classList.remove('selected')   
     }
-    if (!currentDeck[i] || !canSelect.includes(i)) return
+    if (!currentDeck[i]) return
     if (isUnselected) { //select
       showConfirmationDialog(i)
     }
@@ -57,6 +61,8 @@ function showConfirmationDialog (i) {
   document.getElementById('card-confirmation').src = "/static/imgs/cards/"+currentDeck[i][0]+".png"
   document.getElementById('main').style.display = 'none'
   document.getElementById('remote-confirmation-dialog').style.display = 'block'
+  document.getElementById('remote-confirmation-cardinfo').innerHTML = CARD_INFO[currentDeck[i][0]]
+  document.getElementById('confirm').disabled = !canSelect.includes(i)
 }
 
 function cancelSelection () {
@@ -66,14 +72,21 @@ function cancelSelection () {
 }
 
 function confirmSelection () {
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('remote-confirmation-dialog').style.display = 'none'
   if (indexToConfirm == null) return
   document.getElementById('card-container-'+indexToConfirm).classList.add('selected')
   currentDeck[indexToConfirm][1] = 1
   socket.emit('selection-change', {player: userName, deck: currentDeck})
-  document.getElementById('main').style.display = 'block'
-  document.getElementById('remote-confirmation-dialog').style.display = 'none'
   indexToConfirm = null
 }
 
 document.getElementById('cancel').addEventListener('click', cancelSelection)
 document.getElementById('confirm').addEventListener('click', confirmSelection)
+
+function hasDataChanged (data) {
+  if (currentDeck.length != data.deck.length || currentDeck.some((c, i) => c[0] != data.deck[i][0] || c[1] != data.deck[i][1])) return true
+  if (canSelect.length != data.canSelect.length || !canSelect.every(ci => data.canSelect.includes(ci))) return true
+  if (isSwapping != data.isSwapping) return true
+  return false
+}
