@@ -254,7 +254,7 @@ function toNextTurn () {
   game.turn = game.turn == 3 ? 0 : game.turn + 1
   const teamADone = isPlayerDone(game, 0) && isPlayerDone(game, 2)
   const teamBDone = isPlayerDone(game, 1) && isPlayerDone(game, 3)
-  const nextCanTac = getSelectableCards(game.players[game.turn]).includes(15)
+  const nextCanTac = getSelectableCards(game.players[game.turn]).some(i => game.players[game.turn].deck[i][0] === 15)
   if ((teamADone || teamBDone) && !nextCanTac) {
     gameEnd()
     return
