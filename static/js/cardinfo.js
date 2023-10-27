@@ -22,7 +22,7 @@ const CARD_INFO_EN = [
   `,
   `
     <strong>Move</strong><br>
-    Move a stone forward by 7 fields (click stone marked in red).
+    Move a stone forward by 6 fields (click stone marked in red).
   `,
   `
     <strong>Move individually</strong><br>
