@@ -259,7 +259,7 @@ function playCard(game, playerIndex, cardNumber) {
     displaySelectedCard()
     drawGame()
     updateScreens()
-    displayWarning(4)
+    displayWarning(WARN_TAC)
     playCard(game, playerIndex, turnData.tacNewCard)
   }
   if ([1,13].includes(cardNumber)) {

@@ -270,6 +270,8 @@ function toNextTurn () {
   } else {
     turnData = clone(TURN_DATA_INIT)
   }
+  document.getElementById("warning-box").classList.remove("visible")
+  warnScreens(WARN_NOTHING)
   drawGame()
   displayScoreboard()
   updateScreens()
@@ -330,10 +332,10 @@ function displaySelectedCard () {
 
 
 function displayWarning (warningNum) {
-  warningTimeout && clearTimeout(warningTimeout)
+  //warningTimeout && clearTimeout(warningTimeout)
   document.getElementById("warning-box").innerHTML = warnings[warningNum]
   document.getElementById("warning-box").classList.add("visible")
-  warningTimeout = setTimeout(() => {document.getElementById("warning-box").classList.remove("visible")}, 6000)
+  //warningTimeout = setTimeout(() => {document.getElementById("warning-box").classList.remove("visible")}, 6000)
   warnScreens(warningNum)
 }
 

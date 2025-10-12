@@ -51,8 +51,12 @@ function displaySelectedCard () {
 
 let warningTimeout = null
 function displayWarning (warningNum) {
-  warningTimeout && clearTimeout(warningTimeout)
+  if (warningNum == WARN_NOTHING) {
+    document.getElementById("warning-box").classList.remove("visible")
+    return
+  }
+  //warningTimeout && clearTimeout(warningTimeout)
   document.getElementById("warning-box").innerHTML = warnings[warningNum]
   document.getElementById("warning-box").classList.add("visible")
-  warningTimeout = setTimeout(() => {document.getElementById("warning-box").classList.remove("visible")}, 6000)
+  //warningTimeout = setTimeout(() => {document.getElementById("warning-box").classList.remove("visible")}, 6000)
 }
