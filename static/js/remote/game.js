@@ -2,6 +2,7 @@ let currentDeck = []
 let canSelect = []
 let isSwapping = false
 let indexToConfirm = null
+let canChangeSelection = true
 
 const socket = io(window.location.origin);
 socket.on('connect', function(){
@@ -11,7 +12,9 @@ socket.on('update', data => {
   if(!hasDataChanged(data)) return
   document.getElementById('main').style.display = 'block'
   document.getElementById('waiting').style.display = 'none'
+  indexToConfirm = null
   cancelSelection()
+  canChangeSelection = true
   currentDeck = data.deck
   canSelect = data.canSelect
   isSwapping = data.isSwapping
@@ -43,6 +46,7 @@ function displaySwapInfo (show) {
 for (let i = 0; i < 5; i++) {
   const element = document.getElementById('card-container-'+i)
   element.addEventListener('click', e => {
+    if (!canChangeSelection) return
     const isUnselected = currentDeck[i][1] === 0
     currentDeck.forEach(c => c[1] = 0)
     for (let j = 0; j < 5; j++) {
@@ -51,8 +55,8 @@ for (let i = 0; i < 5; i++) {
     if (!currentDeck[i]) return
     if (isUnselected) { //select
       showConfirmationDialog(i)
+      return
     }
-    socket.emit('selection-change', {player: userName, deck: currentDeck})
   })
 }
 
@@ -68,6 +72,10 @@ function showConfirmationDialog (i) {
 function cancelSelection () {
   document.getElementById('main').style.display = 'block'
   document.getElementById('remote-confirmation-dialog').style.display = 'none'
+  for (let i = 0; i < 5; i++) {
+    document.getElementById('card-container-'+i).classList.remove('selected')   
+  }
+  if (indexToConfirm !== null) currentDeck[indexToConfirm][1] = 0
   indexToConfirm = null
 }
 
@@ -79,6 +87,7 @@ function confirmSelection () {
   currentDeck[indexToConfirm][1] = 1
   socket.emit('selection-change', {player: userName, deck: currentDeck})
   indexToConfirm = null
+  canChangeSelection = false
 }
 
 document.getElementById('cancel').addEventListener('click', cancelSelection)
