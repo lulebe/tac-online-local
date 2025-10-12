@@ -343,6 +343,7 @@ function saveGame () {
     game.players[i].teamB = (i % 2 === 1)
   }
   window.localStorage.setItem('game', JSON.stringify(game))
+  window.localStorage.setItem('preTurnGame', JSON.stringify(preTurnGame))
   window.localStorage.setItem('turnData', JSON.stringify(turnData))
   window.localStorage.setItem('swappingCards', JSON.stringify(swappingCards))
 }
@@ -362,6 +363,11 @@ function loadGame () {
   game.usedCards = loadedGame.usedCards
   game.turn = loadedGame.turn
   game.box = loadedGame.box
+  const loadedPreTurnGame = JSON.parse(window.localStorage.getItem('preTurnGame'))
+  preTurnGame.players = loadedPreTurnGame.players
+  preTurnGame.usedCards = loadedPreTurnGame.usedCards
+  preTurnGame.turn = loadedPreTurnGame.turn
+  preTurnGame.box = loadedPreTurnGame.box
   turnData = JSON.parse(window.localStorage.getItem('turnData'))
   swappingCards = JSON.parse(window.localStorage.getItem('swappingCards'))
   displayScoreboard()
